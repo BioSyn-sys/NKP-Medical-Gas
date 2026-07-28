@@ -1,0 +1,7 @@
+# Ignore everything except Dashboard web application files
+*
+!.gitignore
+!index.html
+!daily_o2_chart.html
+!.nojekyll
+!README.md
