@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NKP Medical Oxygen Analytics Dashboard V10</title>
+    <title>NKP Medical Oxygen Analytics Dashboard</title>
     <!-- Fonts & Icons & CDNs -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -453,13 +453,13 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('appSidebar');
             const toggleIcon = document.getElementById('toggleIcon');
-            sidebar.classList.toggle('collapsed');
+            if (sidebar) sidebar.classList.toggle('collapsed');
 
-            if (sidebar.classList.contains('collapsed')) {
-                toggleIcon.className = 'fa-solid fa-angles-right';
+            if (sidebar && sidebar.classList.contains('collapsed')) {
+                if (toggleIcon) toggleIcon.className = 'fa-solid fa-angles-right';
                 localStorage.setItem('sidebarCollapsed', 'true');
             } else {
-                toggleIcon.className = 'fa-solid fa-angles-left';
+                if (toggleIcon) toggleIcon.className = 'fa-solid fa-angles-left';
                 localStorage.setItem('sidebarCollapsed', 'false');
             }
             if (chartObj && (activeTab === 'daily' || activeTab === 'monthly')) {
@@ -467,22 +467,19 @@
             }
         }
 
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            document.getElementById('appSidebar').classList.add('collapsed');
-            document.getElementById('toggleIcon').className = 'fa-solid fa-angles-right';
-        }
-
         function updateLiveClock() {
+            const cTime = document.getElementById('clockTime');
+            const cDate = document.getElementById('clockDate');
+            if (!cTime || !cDate) return;
+
             const now = new Date();
             const timeStr = now.toLocaleTimeString('th-TH', { hour12: false });
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const dateStr = now.toLocaleDateString('th-TH', dateOptions);
 
-            document.getElementById('clockTime').innerText = timeStr;
-            document.getElementById('clockDate').innerText = dateStr;
+            cTime.innerText = timeStr;
+            cDate.innerText = dateStr;
         }
-        setInterval(updateLiveClock, 1000);
-        updateLiveClock();
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -494,19 +491,16 @@
             const icon = document.getElementById('themeIcon');
             const text = document.getElementById('themeText');
             if (newTheme === 'dark') {
-                icon.className = 'fa-solid fa-moon';
-                text.innerText = 'โหมดมืด';
+                if (icon) icon.className = 'fa-solid fa-moon';
+                if (text) text.innerText = 'โหมดมืด';
             } else {
-                icon.className = 'fa-solid fa-sun';
-                text.innerText = 'โหมดสว่าง';
+                if (icon) icon.className = 'fa-solid fa-sun';
+                if (text) text.innerText = 'โหมดสว่าง';
             }
             if (chartObj && (activeTab === 'daily' || activeTab === 'monthly')) {
                 chartObj.update();
             }
         }
-
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
 
         function switchTab(tabKey) {
             activeTab = tabKey;
@@ -516,7 +510,6 @@
                 if (el) el.classList.toggle('active', k === tabKey);
             });
             
-            // Clean up chart object if switching away from chart tabs
             if (chartObj && (tabKey !== 'daily' && tabKey !== 'monthly')) {
                 chartObj.destroy();
                 chartObj = null;
@@ -533,6 +526,8 @@
 
         function renderKPIs() {
             const grid = document.getElementById('kpiGrid');
+            if (!grid) return;
+
             if (activeTab === 'daily' || activeTab === 'cost') {
                 const s = db.daily.stats;
                 grid.innerHTML = `
@@ -638,6 +633,8 @@
 
         function renderDailyModule() {
             const content = document.getElementById('moduleContent');
+            if (!content) return;
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
@@ -696,7 +693,9 @@
                 </div>
             `;
 
-            const ctx = document.getElementById('dailyCanvas').getContext('2d');
+            const canvas = document.getElementById('dailyCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
             let datasets = [];
             if (dailyUnit === 'm3') {
                 datasets = [
@@ -731,6 +730,8 @@
 
         function renderMonthlyModule() {
             const content = document.getElementById('moduleContent');
+            if (!content) return;
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
@@ -778,7 +779,9 @@
                 </div>
             `;
 
-            const ctx = document.getElementById('monthlyCanvas').getContext('2d');
+            const canvas = document.getElementById('monthlyCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
             if (chartObj) chartObj.destroy();
             chartObj = new Chart(ctx, {
                 type: 'line',
@@ -796,6 +799,8 @@
 
         function renderCostModule() {
             const content = document.getElementById('moduleContent');
+            if (!content) return;
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
@@ -889,6 +894,8 @@
 
         function renderEmergencyModule() {
             const content = document.getElementById('moduleContent');
+            if (!content) return;
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
@@ -1027,12 +1034,14 @@
 
         function renderImportModule() {
             const content = document.getElementById('moduleContent');
+            if (!content) return;
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
                         <div><i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i> โมดูลนำเข้า & ส่งออกไฟล์ Excel (Excel Import / Export)</div>
-                        <button class="btn-export-excel" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="exportMonthlyExcel()">
-                            <i class="fa-solid fa-file-excel"></i> Export Excel รายงานสรุป (เฉพาะ m³)
+                        <button class="btn-export-excel" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 10px; cursor: pointer; font-weight: 600;" onclick="exportMonthlyExcel()">
+                            <i class="fa-solid fa-file-excel"></i> Export Excel (เฉพาะ m³)
                         </button>
                     </div>
                     <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
@@ -1050,9 +1059,16 @@
             switchTab('daily');
         }
 
+        // Safe Initialization on Window Load
         window.onload = function() {
-            renderKPIs();
-            renderModule();
+            try {
+                updateLiveClock();
+                setInterval(updateLiveClock, 1000);
+                renderKPIs();
+                renderModule();
+            } catch (err) {
+                console.error("Dashboard Init Error:", err);
+            }
         };
     </script>
 </body>
