@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NKP Medical Oxygen AI Dashboard V7</title>
+    <title>NKP Medical Oxygen AI Dashboard V8</title>
     <!-- Fonts & Icons & CDNs -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -101,12 +101,7 @@
             margin-bottom: 1.25rem;
         }
 
-        .brand-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            overflow: hidden;
-        }
+        .brand-info { display: flex; align-items: center; gap: 0.75rem; overflow: hidden; }
 
         .brand-logo {
             width: 44px;
@@ -140,12 +135,7 @@
             flex-shrink: 0;
         }
 
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            flex-grow: 1;
-        }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
 
         .menu-item {
             background: transparent;
@@ -193,12 +183,7 @@
         }
         .sidebar.collapsed .sidebar-footer { display: none; }
 
-        .main-wrapper {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
+        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
 
         .top-header {
             background: var(--bg-sidebar);
@@ -218,12 +203,7 @@
         .header-title-box h1 { font-size: 1.35rem; font-weight: 700; color: var(--text-main); }
         .header-title-box p { font-size: 0.82rem; color: var(--text-muted); }
 
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.85rem;
-            flex-wrap: wrap;
-        }
+        .header-controls { display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap; }
 
         .btn-ai-summary {
             background: linear-gradient(135deg, #a855f7, #7e22ce);
@@ -285,12 +265,7 @@
 
         .content-body { padding: 1.75rem 2rem; flex-grow: 1; }
 
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
 
         .kpi-card {
             background: var(--bg-card);
@@ -328,7 +303,6 @@
             flex-wrap: wrap;
         }
 
-        /* Facility Colors */
         .th-nkp { background: var(--bg-nkp) !important; color: var(--color-nkp) !important; border-bottom: 2px solid var(--color-nkp); }
         .th-khon { background: var(--bg-khon) !important; color: var(--color-khon) !important; border-bottom: 2px solid var(--color-khon); }
         .th-total { background: var(--bg-total) !important; color: var(--color-total) !important; border-bottom: 2px solid var(--color-total); }
@@ -359,211 +333,42 @@
         .drop-zone { border: 2px dashed var(--primary-cyan); border-radius: 16px; padding: 2.5rem; text-align: center; background: rgba(6, 182, 212, 0.04); cursor: pointer; }
         #fileInput { display: none; }
 
-        /* ---------------------------------------------------- */
-        /* AI ASSISTANT CHATBOT FLOATING WIDGET STYLES */
-        /* ---------------------------------------------------- */
+        /* AI CHATBOT WIDGET STYLES */
         .ai-fab {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple));
-            color: #ffffff;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
-            z-index: 1000;
+            position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple)); color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.4); display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; cursor: pointer; box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5); z-index: 1000;
+        }
+        .ai-chat-window {
+            position: fixed; bottom: 6rem; right: 2rem; width: 410px; height: 560px; max-width: calc(100vw - 2rem);
+            background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 20px;
+            box-shadow: 0 15px 40px var(--shadow-color); display: flex; flex-direction: column; z-index: 1000;
+            overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.95);
             transition: all 0.3s ease;
         }
-
-        .ai-fab:hover {
-            transform: scale(1.1) rotate(10deg);
-        }
-
-        .ai-chat-window {
-            position: fixed;
-            bottom: 6rem;
-            right: 2rem;
-            width: 410px;
-            height: 560px;
-            max-width: calc(100vw - 2rem);
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            box-shadow: 0 15px 40px var(--shadow-color);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            overflow: hidden;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px) scale(0.95);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .ai-chat-window.open {
-            opacity: 1;
-            pointer-events: all;
-            transform: translateY(0) scale(1);
-        }
-
-        .ai-chat-header {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.2));
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ai-header-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .ai-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.2rem;
-        }
-
+        .ai-chat-window.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+        .ai-chat-header { background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.2)); border-bottom: 1px solid var(--border-color); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+        .ai-header-info { display: flex; align-items: center; gap: 0.75rem; }
+        .ai-avatar { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; }
         .ai-header-text h3 { font-size: 0.98rem; font-weight: 700; color: var(--text-main); }
         .ai-status-badge { font-size: 0.72rem; color: var(--accent-emerald); display: flex; align-items: center; gap: 0.35rem; }
         .ai-status-dot { width: 7px; height: 7px; background: var(--accent-emerald); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--accent-emerald); }
+        .ai-close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        .ai-chat-body { flex-grow: 1; padding: 1.2rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; }
+        .chat-msg { max-width: 85%; padding: 0.75rem 1rem; border-radius: 14px; font-size: 0.88rem; line-height: 1.45; }
+        .msg-bot { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .msg-user { background: linear-gradient(135deg, var(--primary-cyan), #0284c7); color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .quick-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+        .chip-btn { background: rgba(6, 182, 212, 0.12); border: 1px solid var(--primary-cyan); color: var(--primary-cyan); font-size: 0.76rem; padding: 0.3rem 0.65rem; border-radius: 12px; cursor: pointer; }
+        .chip-btn:hover { background: var(--primary-cyan); color: #000000; }
+        .ai-chat-input-area { padding: 0.85rem 1rem; border-top: 1px solid var(--border-color); background: var(--bg-body); display: flex; gap: 0.5rem; }
+        .ai-input { flex-grow: 1; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.6rem 0.9rem; color: var(--text-main); font-size: 0.88rem; outline: none; }
+        .ai-send-btn { background: var(--primary-cyan); color: #000000; border: none; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
 
-        .ai-close-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .ai-chat-body {
-            flex-grow: 1;
-            padding: 1.2rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.9rem;
-        }
-
-        .chat-msg {
-            max-width: 85%;
-            padding: 0.75rem 1rem;
-            border-radius: 14px;
-            font-size: 0.88rem;
-            line-height: 1.45;
-        }
-
-        .msg-bot {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .msg-user {
-            background: linear-gradient(135deg, var(--primary-cyan), #0284c7);
-            color: #ffffff;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .quick-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-top: 0.5rem;
-        }
-
-        .chip-btn {
-            background: rgba(6, 182, 212, 0.12);
-            border: 1px solid var(--primary-cyan);
-            color: var(--primary-cyan);
-            font-size: 0.76rem;
-            padding: 0.3rem 0.65rem;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .chip-btn:hover {
-            background: var(--primary-cyan);
-            color: #000000;
-        }
-
-        .ai-chat-input-area {
-            padding: 0.85rem 1rem;
-            border-top: 1px solid var(--border-color);
-            background: var(--bg-body);
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .ai-input {
-            flex-grow: 1;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.6rem 0.9rem;
-            color: var(--text-main);
-            font-size: 0.88rem;
-            outline: none;
-        }
-
-        .ai-send-btn {
-            background: var(--primary-cyan);
-            color: #000000;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Modal Executive Summary */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-        .modal-card {
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            width: 650px;
-            max-width: 90vw;
-            padding: 2rem;
-            box-shadow: 0 20px 50px var(--shadow-color);
-        }
+        .modal-card { background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 20px; width: 650px; max-width: 90vw; padding: 2rem; box-shadow: 0 20px 50px var(--shadow-color); }
     </style>
 </head>
 <body>
@@ -612,18 +417,17 @@
     <div class="main-wrapper">
         <header class="top-header">
             <div class="header-title-box">
-                <h1 id="pageTitleText">NKP Medical Oxygen AI Dashboard V7</h1>
+                <h1 id="pageTitleText">NKP Medical Oxygen AI Dashboard V8</h1>
                 <p id="pageSubTitleText">ระบบผู้ช่วยปัญญาประดิษฐ์ (AI Assistant Engine) โรงพยาบาลนครพิงค์</p>
             </div>
 
             <div class="header-controls">
-                <!-- AI Executive Summary Button -->
                 <button class="btn-ai-summary" onclick="openAISummaryModal()">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> AI สรุปรายงานผู้บริหาร
                 </button>
 
                 <button class="btn-export-excel" onclick="exportMonthlyExcel()">
-                    <i class="fa-solid fa-file-excel"></i> Export Excel
+                    <i class="fa-solid fa-file-excel"></i> Export Excel (เฉพาะ m³)
                 </button>
 
                 <div class="live-clock-card">
@@ -641,7 +445,6 @@
         </header>
 
         <main class="content-body">
-            <!-- AI Insights Card Bar -->
             <div class="content-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(168, 85, 247, 0.08)); border: 1px solid var(--primary-cyan); margin-bottom: 1.5rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
@@ -688,10 +491,10 @@
 
         <div class="ai-chat-body" id="aiChatBody">
             <div class="chat-msg msg-bot">
-                สวัสดีครับผม! 👋 ผมคือ **AI Assistant** ผู้ช่วยวิศวกรรมก๊าซทางการแพทย์ประจำโรงพยาบาลนครพิงค์ สามารถสอบถามสถิติ ปริมาณการใช้ การคำนวณท่อฉุกเฉิน หรือเปรียบเทียบต้นทุนได้เลยครับ!
+                สวัสดีครับผม! 👋 ผมคือ **AI Assistant** ผู้ช่วยวิศวกรรมก๊าซทางการแพทย์ประจำโรงพยาบาลนครพิงค์ สามารถสอบถามสถิติ ปริมาณการใช้ การคำนวณท่อฉุกเฉิน หรือความหมายของหน่วย (m³) ได้เลยครับ!
                 <div class="quick-chips">
                     <button class="chip-btn" onclick="sendQuickQuery('สรุปยอดใช้ออกซิเจนเดือนนี้')">📊 สรุปยอดใช้ออกซิเจน</button>
-                    <button class="chip-btn" onclick="sendQuickQuery('ถังหลักเหลือใช้ได้อีกกี่วัน')">⛽ ถังหลักใช้ได้กี่วัน?</button>
+                    <button class="chip-btn" onclick="sendQuickQuery('ความหมายของ m³ คืออะไร')">💡 ความหมายของหน่วย m³</button>
                     <button class="chip-btn" onclick="sendQuickQuery('คำนวณท่อฉุกเฉิน 3 วัน')">🚑 คำนวณท่อฉุกเฉิน 3 วัน</button>
                     <button class="chip-btn" onclick="sendQuickQuery('เปรียบเทียบต้นทุนออกซิเจนเหลวกับท่อ')">💰 เปรียบเทียบต้นทุน</button>
                 </div>
@@ -726,6 +529,47 @@
         let dailyUnit = 'm3';
         let chartObj = null;
 
+        // Custom Styled Excel Export Function (Exclusive m³ values + Concise Footnote)
+        function exportMonthlyExcel() {
+            const rows = [
+                ['รายงานสรุปปริมาณการใช้ออกซิเจนทางการแพทย์ - โรงพยาบาลนครพิงค์ & ศูนย์มะเร็งขอนตาล'],
+                ['สรุปผลการใช้งานสะสมจนถึงเดือนปัจจุบัน (กรกฎาคม 2569)'],
+                [''],
+                ['เดือน/ปี', 'โรงพยาบาลนครพิงค์ (m³)', 'ศูนย์มะเร็งขอนตาล (m³)', 'รวมปริมาตรก๊าซทั้งหมด (m³)', 'รวมมูลค่าประมาณการ (บาท)']
+            ];
+
+            db.monthly.months.forEach((m, i) => {
+                const nkp_m3 = db.monthly.nkp_m3[i];
+                const khon_m3 = db.monthly.khon_m3[i];
+                const total_m3 = db.monthly.total_m3[i];
+                const cost_thb = Math.round(total_m3 * 10.90);
+                rows.push([m, nkp_m3, khon_m3, total_m3, cost_thb]);
+            });
+
+            const sum_nkp_m3 = db.monthly.nkp_m3.reduce((a, b) => a + b, 0);
+            const sum_khon_m3 = db.monthly.khon_m3.reduce((a, b) => a + b, 0);
+            const sum_total_m3 = db.monthly.total_m3.reduce((a, b) => a + b, 0);
+            const sum_cost = sum_total_m3 * 10.90;
+
+            rows.push(['']);
+            rows.push(['ยอดยอดรวมสะสมทั้งสิ้น', sum_nkp_m3, sum_khon_m3, sum_total_m3, sum_cost]);
+            rows.push(['ค่าเฉลี่ยต่อเดือน', +(sum_nkp_m3/db.monthly.months.length).toFixed(2), +(sum_khon_m3/db.monthly.months.length).toFixed(2), +(sum_total_m3/db.monthly.months.length).toFixed(2), +(sum_cost/db.monthly.months.length).toFixed(2)]);
+            
+            // Adding Concise Footnote Explaining (m³)
+            rows.push(['']);
+            rows.push(['📌 หมายเหตุ / คำอธิบายความหมายของหน่วย (m³) แบบย่อ:']);
+            rows.push(['1. ลบ.ม. (m³): ย่อมาจาก "ลูกบาศก์เมตรก๊าซ" (Cubic Meters of Gas) คือปริมาตรของก๊าซออกซิเจนทางการแพทย์ที่สภาวะบรรยากาศมาตรฐาน (1 atm, 15°C) สำหรับจ่ายเข้าระบบไปป์ไลน์โรงพยาบาล']);
+            rows.push(['2. อัตราการขยายตัว (Expansion Ratio): ออกซิเจนเหลว (LOX) 1 ลิตร ขยายตัวได้เป็นก๊าซออกซิเจน 860 ลิตรก๊าซ (0.86 m³) หรือ ออกซิเจนเหลว 1 Kg ขยายตัวได้ 0.755 m³ ก๊าซ']);
+            rows.push(['3. เกณฑ์มาตรฐานจัดซื้อจัดจ้าง: การวัดปริมาณการใช้และคำนวณราคาก๊าซทางการแพทย์ตามมาตรฐาน NFPA 99 กำหนดให้ใช้หน่วย ลบ.ม. (m³) เป็นหน่วยอ้างอิงหลักในการตรวจรับพัสดุ']);
+
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{ wch: 18 }, { wch: 25 }, { wch: 25 }, { wch: 28 }, { wch: 25 }];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "สรุปการใช้ออกซิเจนรายเดือน");
+            XLSX.writeFile(wb, "รายงานสรุปการใช้ออกซิเจน_รพนครพิงค์_ถึงกรกฎาคม2569.xlsx");
+        }
+
         function toggleAIChat() {
             document.getElementById('aiChatWindow').classList.toggle('open');
         }
@@ -741,8 +585,6 @@
             if (!q) return;
 
             const chatBody = document.getElementById('aiChatBody');
-            
-            // Append User Message
             const uMsg = document.createElement('div');
             uMsg.className = 'chat-msg msg-user';
             uMsg.innerText = q;
@@ -751,7 +593,6 @@
             input.value = '';
             chatBody.scrollTop = chatBody.scrollHeight;
 
-            // Generate AI Response
             setTimeout(() => {
                 const bMsg = document.createElement('div');
                 bMsg.className = 'chat-msg msg-bot';
@@ -763,11 +604,16 @@
 
         function getAIResponse(q) {
             const qLower = q.toLowerCase();
-            if (qLower.includes('สรุป') || qLower.includes('เดือนนี้') || qLower.includes('ยอด')) {
+            if (qLower.includes('ความหมาย') || qLower.includes('m³') || qLower.includes('ลบ.ม')) {
+                return `💡 **คำอธิบายความหมายของหน่วย ลบ.ม. (m³) แบบย่อ:**<br>
+                • **ลูกบาศก์เมตรก๊าซ (m³):** คือปริมาตรก๊าซออกซิเจนทางการแพทย์ที่สภาวะบรรยากาศมาตรฐาน (1 atm, 15°C) สำหรับจ่ายเข้าระบบไปป์ไลน์โรงพยาบาล<br>
+                • **อัตราขยายตัว:** ออกซิเจนเหลว 1 ลิตรขยายตัวได้ **860 ลิตรก๊าซ (0.86 m³)** หรือ 1 Kg ขยายตัวได้ **0.755 m³ ก๊าซ**<br>
+                • **มาตรฐาน NFPA 99:** กำหนดให้ใช้หน่วย m³ เป็นเกณฑ์มาตรฐานหลักในการจัดซื้อจัดจ้างและคิดคำนวณปริมาณการใช้งานทางการแพทย์ครับ`;
+            } else if (qLower.includes('สรุป') || qLower.includes('เดือนนี้') || qLower.includes('ยอด')) {
                 return `📊 **สรุปยอดการใช้ออกซิเจนเดือนกรกฎาคม 2569 (เดือนปัจจุบัน):**<br>
-                • **รพ.นครพิงค์ (ถังหลัก):** 74,335.21 m³ (คิดเป็นแก๊สเหลว ~98,457 Kg)<br>
-                • **ศูนย์มะเร็งขอนตาล:** 1,542.25 m³ (คิดเป็นแก๊สเหลว ~2,042 Kg)<br>
-                • **ยอดรวมทั้งองค์กร:** **75,877.46 m³** (ค่าใช้จ่ายประมาณ 827,064 บาท)`;
+                • **รพ.นครพิงค์ (ถังหลัก):** 74,335.21 m³<br>
+                • **ศูนย์มะเร็งขอนตาล:** 1,542.25 m³<br>
+                • **ยอดรวมทั้งองค์กร:** **75,877.46 m³** (คิดเป็นงบประมาณ ~827,064 บาท)`;
             } else if (qLower.includes('วัน') || qLower.includes('เหลือ') || qLower.includes('กี่วัน')) {
                 return `⛽ **การวิเคราะห์การสำรองแก๊สถังหลัก (37,000 ลิตร):**<br>
                 • การใช้เฉลี่ยต่อวัน: **26.24 นิ้วน้ำ/วัน** (3,176.04 Kg/วัน)<br>
@@ -775,17 +621,15 @@
                 • วงรอบการเติมแก๊สปกติ: ลดลงเหลือ 68 นิ้วน้ำ ทุกๆ **2 วัน (48 ชั่วโมง)** รถแก๊สจะเข้ามาเติมจนเต็ม`;
             } else if (qLower.includes('ท่อ') || qLower.includes('ฉุกเฉิน') || qLower.includes('3 วัน')) {
                 return `🚑 **คำนวณความต้องการท่อสำรองฉุกเฉิน 3 วันเต็ม (72 ชม.):**<br>
-                • ปริมาณแก๊สที่ต้องการ: **7,342.98 m³** (LOX ~9,725 Kg)<br>
+                • ปริมาณแก๊สที่ต้องการ: **7,342.98 m³**<br>
                 • ท่อมาตรฐาน 6Q (2,000 PSI): **1,224 ท่อ** (อัตราสลับท่อ 17 ท่อ/ชม.)<br>
                 • ท่อขนาดใหญ่ 7Q: **1,049 ท่อ**<br>
                 • คลังท่อสำรองปัจจุบัน 162 ท่อ รองรับจ่ายได้ 9.44 ชม. แรกเร่งด่วน`;
-            } else if (qLower.includes('เปรียบเทียบ') || qLower.includes('ต้นทุน') || qLower.includes('ประหยัด')) {
+            } else {
                 return `💰 **วิเคราะห์ความคุ้มค่าเชิงต้นทุน (LOX vs ท่อ 6Q):**<br>
                 • ออกซิเจนเหลว (LOX): **10.90 บาท/m³** (เทียบเท่า 65.40 บาท/6m³)<br>
                 • ออกซิเจนท่อ 6Q: **16.67 บาท/m³** (100 บาท/ท่อ)<br>
                 • **ออกซิเจนเหลวประหยัดกว่า 34.60%** ช่วยให้ รพ.นครพิงค์ ประหยัดงบได้ **13,827.95 บาท/วัน** หรือ **5,047,200 บาท/ปี!**`;
-            } else {
-                return `💡 **คำแนะนำจาก AI:** ระบบออกซิเจนทางการแพทย์ รพ.นครพิงค์ มีเสถียรภาพสูงมาก คลังท่อสำรอง 162 ท่อ จ่ายแก๊สได้ 9.44 ชม. ครอบคลุมระยะเวลาจัดส่งฉุกเฉิน 3 ชม. ของ บ.ลานนาแก๊ส ปลอดภัย 100% ครับ!`;
             }
         }
 
@@ -802,41 +646,6 @@
 
         function closeAISummaryModal() {
             document.getElementById('aiSummaryModal').classList.remove('open');
-        }
-
-        function exportMonthlyExcel() {
-            const rows = [
-                ['รายงานสรุปปริมาณการใช้ออกซิเจนเหลวทางการแพทย์ - โรงพยาบาลนครพิงค์ & ศูนย์มะเร็งขอนตาล'],
-                ['สรุปผลการใช้งานสะสมจนถึงเดือนปัจจุบัน (กรกฎาคม 2569)'],
-                [''],
-                ['เดือน/ปี', 'โรงพยาบาลนครพิงค์ (m³)', 'โรงพยาบาลนครพิงค์ (Kg)', 'ศูนย์มะเร็งขอนตาล (m³)', 'ศูนย์มะเร็งขอนตาล (Kg)', 'รวมปริมาตรก๊าซทั้งหมด (m³)', 'รวมมูลค่าประมาณการ (บาท)']
-            ];
-
-            db.monthly.months.forEach((m, i) => {
-                const nkp_m3 = db.monthly.nkp_m3[i];
-                const nkp_kg = Math.round(nkp_m3 / 0.755);
-                const khon_m3 = db.monthly.khon_m3[i];
-                const khon_kg = Math.round(khon_m3 / 0.755);
-                const total_m3 = db.monthly.total_m3[i];
-                const cost_thb = Math.round(total_m3 * 10.90);
-                rows.push([m, nkp_m3, nkp_kg, khon_m3, khon_kg, total_m3, cost_thb]);
-            });
-
-            const sum_nkp_m3 = db.monthly.nkp_m3.reduce((a, b) => a + b, 0);
-            const sum_khon_m3 = db.monthly.khon_m3.reduce((a, b) => a + b, 0);
-            const sum_total_m3 = db.monthly.total_m3.reduce((a, b) => a + b, 0);
-            const sum_cost = sum_total_m3 * 10.90;
-
-            rows.push(['']);
-            rows.push(['ยอดยอดรวมสะสมทั้งสิ้น', sum_nkp_m3, Math.round(sum_nkp_m3/0.755), sum_khon_m3, Math.round(sum_khon_m3/0.755), sum_total_m3, sum_cost]);
-            rows.push(['ค่าเฉลี่ยต่อเดือน', +(sum_nkp_m3/db.monthly.months.length).toFixed(2), +(sum_nkp_m3/db.monthly.months.length/0.755).toFixed(2), +(sum_khon_m3/db.monthly.months.length).toFixed(2), +(sum_khon_m3/db.monthly.months.length/0.755).toFixed(2), +(sum_total_m3/db.monthly.months.length).toFixed(2), +(sum_cost/db.monthly.months.length).toFixed(2)]);
-
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            ws['!cols'] = [{ wch: 18 }, { wch: 25 }, { wch: 22 }, { wch: 25 }, { wch: 22 }, { wch: 28 }, { wch: 25 }];
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "สรุปการใช้ออกซิเจนรายเดือน");
-            XLSX.writeFile(wb, "รายงานสรุปการใช้ออกซิเจน_รพนครพิงค์_ถึงกรกฎาคม2569.xlsx");
         }
 
         function toggleSidebar() {
@@ -1000,7 +809,7 @@
                         <i class="fa-solid fa-file-excel kpi-icon" style="color: var(--accent-emerald);"></i>
                         <div class="kpi-label">สถานะโมดูลนำเข้า/ส่งออก Excel</div>
                         <div class="kpi-value" style="color: var(--accent-emerald);">พร้อมใช้งาน</div>
-                        <div class="kpi-subtext">รองรับการส่งออกไฟล์ Excel ถึงเดือนปัจจุบัน</div>
+                        <div class="kpi-subtext">รองรับการส่งออกไฟล์ Excel ถึงเดือนปัจจุบัน (เฉพาะ m³)</div>
                     </div>
                 `;
             }
@@ -1114,7 +923,7 @@
                     <div class="section-title">
                         <div><i class="fa-solid fa-chart-area" style="color: var(--accent-emerald);"></i> กราฟสถิติการใช้ออกซิเจนเหลวรายเดือน (สะสมจนถึงเดือนปัจจุบัน)</div>
                         <button class="btn-export-excel" onclick="exportMonthlyExcel()">
-                            <i class="fa-solid fa-file-excel"></i> Export Excel รายงานสรุป
+                            <i class="fa-solid fa-file-excel"></i> Export Excel (เฉพาะ m³)
                         </button>
                     </div>
                     <div class="chart-container">
@@ -1389,7 +1198,7 @@
                     <div class="section-title">
                         <div><i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i> โมดูลนำเข้า & ส่งออกไฟล์ Excel (Excel Import / Export)</div>
                         <button class="btn-export-excel" onclick="exportMonthlyExcel()">
-                            <i class="fa-solid fa-file-excel"></i> Export Excel รายงานสรุปสะสมถึงปัจจุบัน
+                            <i class="fa-solid fa-file-excel"></i> Export Excel รายงานสรุป (เฉพาะ m³)
                         </button>
                     </div>
                     <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
