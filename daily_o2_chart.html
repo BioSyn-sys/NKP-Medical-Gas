@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>NKP Medical Oxygen Analytics Dashboard</title>
+    <title>NKP Medical Oxygen Analytics Dashboard V14</title>
     <!-- Fonts & Icons & CDNs -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -360,7 +360,7 @@
 
         .building-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
             gap: 1.25rem;
             margin-top: 1rem;
         }
@@ -368,17 +368,17 @@
         .building-card {
             background: var(--bg-body);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 1.25rem;
+            border-radius: 16px;
+            padding: 1.35rem;
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.35 ease;
+            transition: all 0.35s ease;
         }
 
         .building-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 30px var(--shadow-color);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 35px var(--shadow-color);
             border-color: var(--primary-cyan);
         }
 
@@ -403,6 +403,15 @@
             justify-content: center;
             font-weight: 700;
             margin-right: 0.5rem;
+        }
+
+        .load-box {
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 10px;
+            padding: 0.65rem 0.85rem;
+            margin-top: 0.65rem;
+            margin-bottom: 0.65rem;
         }
     </style>
 </head>
@@ -1002,112 +1011,184 @@
                     </div>
                 </div>
 
-                <!-- BUILDING CAMPUS MAP & CYLINDER COUNT -->
+                <!-- BUILDING CAMPUS MAP & DETAILED LOAD CALCULATION -->
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-building-circle-check" style="color: var(--accent-amber);"></i> 3. รายละเอียดผังอาคาร และ จำนวนท่อสำรองประจำสเตชั่น (8 อาคาร + ศูนย์มะเร็งขอนตาล)</div>
+                        <div><i class="fa-solid fa-building-circle-check" style="color: var(--accent-amber);"></i> 3. รายละเอียดภาระโหลดการใช้ออกซิเจนรายตึก (Calculated Building Oxygen Load) และคลังท่อสำรอง</div>
                     </div>
                     <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
-                        เรียงลำดับการสลับเปิดวาล์วฉุกเฉิน 1 - 8 กรณีระบบออกซิเจนเหลว (LOX) ขัดข้อง (เพียงเลื่อนเมาส์ชี้ที่การ์ดเพื่อขยายดูรายละเอียด):
+                        คำนวณภาระโหลดก๊าซตามสัดส่วนเตียง/ความวิกฤตของหอผู้ป่วยประจำอาคาร (ชี้เมาส์เพื่อขยายดูสเปกและการสลับวาล์วฉุกเฉิน 1 - 8):
                     </p>
 
                     <div class="building-grid">
+                        <!-- BUILDING 1 (อุบัติเหตุ / ICU) -->
+                        <div class="building-card" style="border-left: 5px solid #f43f5e;">
+                            <span class="building-badge" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">ลำดับที่ 5 (วิกฤตหนัก)</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">5</span> อาคาร 1 (ตึก อบ. / อุบัติเหตุ & ICU)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (32.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #f43f5e;">773.88 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(32.25 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>537.4 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong style="color: var(--accent-rose);">30 ท่อ (7 m³ = 210 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: <strong>6 ท่อ</strong></div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: var(--accent-rose);">6.51 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 16 (ตึกฟ้า) -->
                         <div class="building-card" style="border-left: 5px solid #06b6d4;">
                             <span class="building-badge" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">ลำดับที่ 1 (Auto Standby)</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle">1</span> ตึกฟ้า (อาคาร 16)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">24 ท่อ (6 m³)</strong></div>
-                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle">1</span> อาคาร 16 (ตึกฟ้า - ผู้ป่วยใน)</h3>
+                            
+                            <div class="load-box">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (18.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary-cyan);">428.61 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(17.86 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>297.6 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">24 ท่อ (6 m³ = 144 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: 0 ท่อ</div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: var(--primary-cyan); margin-top: 0.4rem;">⚡ ทำงานจ่ายแก๊สเข้าแทนอัตโนมัติเป็นจุดแรกเมื่อ LOX ตัด</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong class="td-nkp">8.06 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
-                        <div class="building-card" style="border-left: 5px solid #ec4899;">
-                            <span class="building-badge" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">ลำดับที่ 2</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">2</span> ตึกชมพู (อาคาร 12)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">19 ท่อ (6 m³)</strong></div>
-                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 19) | นอกราว: 0 ท่อ</div>
-                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: #ec4899; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 2 หลังตรวจสอบตึก 16</div>
-                            </div>
-                        </div>
-
+                        <!-- BUILDING 14 (ตึกเขียว) -->
                         <div class="building-card" style="border-left: 5px solid #10b981;">
                             <span class="building-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">ลำดับที่ 3</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">3</span> ตึกเขียว (อาคาร 14)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong style="color: var(--accent-emerald);">20 ท่อ (7 m³)</strong></div>
-                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">3</span> อาคาร 14 (ตึกเขียว - ศัลยกรรม)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (14.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #10b981;">345.27 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(14.39 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>239.8 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong style="color: var(--accent-emerald);">20 ท่อ (7 m³ = 140 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> | นอกราว: 0 ท่อ</div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
-                                <div style="font-size: 0.8rem; color: var(--accent-emerald); margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 3</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: var(--accent-emerald);">9.73 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
+                        <!-- BUILDING 11 (ตึกขาว) -->
                         <div class="building-card" style="border-left: 5px solid #f8fafc;">
                             <span class="building-badge" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">ลำดับที่ 4</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">4</span> ตึกขาว (อาคาร 11)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">24 ท่อ (6 m³)</strong></div>
-                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">4</span> อาคาร 11 (ตึกขาว - อายุรกรรม)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(248, 250, 252, 0.2); background: rgba(248, 250, 252, 0.05);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (13.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #f8fafc;">309.55 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(12.90 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>215.0 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">24 ท่อ (6 m³ = 144 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: 0 ท่อ</div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: #f8fafc; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 4</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong>11.16 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
-                        <div class="building-card" style="border-left: 5px solid #f43f5e;">
-                            <span class="building-badge" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">ลำดับที่ 5</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">5</span> ตึก อบ. / อุบัติเหตุ (อาคาร 1)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong style="color: var(--accent-rose);">30 ท่อ (7 m³)</strong></div>
-                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: <strong>6 ท่อ</strong></div>
-                                <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
-                                <div style="font-size: 0.8rem; color: var(--accent-rose); margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 5</div>
+                        <!-- BUILDING 12 (ตึกชมพู) -->
+                        <div class="building-card" style="border-left: 5px solid #ec4899;">
+                            <span class="building-badge" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">ลำดับที่ 2</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">2</span> อาคาร 12 (ตึกชมพู - กุมาร/สูติ)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(236, 72, 153, 0.3); background: rgba(236, 72, 153, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (9.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #ec4899;">226.21 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(9.43 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>157.1 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">19 ท่อ (6 m³ = 114 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 19) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #ec4899;">12.09 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
+                        <!-- BUILDING 10 (ตึกส้ม) -->
                         <div class="building-card" style="border-left: 5px solid #f97316;">
                             <span class="building-badge" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">ลำดับที่ 6</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">6</span> ตึกส้ม (อาคาร 10)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">14 ท่อ (6 m³)</strong></div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">6</span> อาคาร 10 (ตึกส้ม - จักษุ/หูคอจมูก)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (6.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #f97316;">142.87 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(5.95 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>99.2 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">14 ท่อ (6 m³ = 84 m³)</strong></div>
                                 <div>• ในราว Manifold: <strong>24 ท่อ</strong> (ใส่ 14) | นอกราว: 0 ท่อ</div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: #f97316; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 6</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #f97316;">14.11 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
+                        <!-- BUILDING 9 (ตึกเหลือง) -->
                         <div class="building-card" style="border-left: 5px solid #eab308;">
                             <span class="building-badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">ลำดับที่ 7</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">7</span> ตึกเหลือง (อาคาร 9)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">7 ท่อ (6 m³)</strong></div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">7</span> อาคาร 9 (ตึกเหลือง - ฟื้นฟูเรื้อรัง)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(234, 179, 8, 0.3); background: rgba(234, 179, 8, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (3.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #eab308;">83.34 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(3.47 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>57.9 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">7 ท่อ (6 m³ = 42 m³)</strong></div>
                                 <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 7) | นอกราว: 0 ท่อ</div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: #eab308; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 7</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #eab308;">12.10 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
+                        <!-- BUILDING 3 (ตึก OPD) -->
                         <div class="building-card" style="border-left: 5px solid #ca8a04;">
                             <span class="building-badge" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">ลำดับที่ 8</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">8</span> ตึก OPD / ผู้ป่วยนอก (อาคาร 3)</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">24 ท่อ (6 m³)</strong></div>
-                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">8</span> อาคาร 3 (ตึก OPD / ผู้ป่วยนอก)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(202, 138, 4, 0.3); background: rgba(202, 138, 4, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (3.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #ca8a04;">71.43 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(2.98 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>49.6 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">24 ท่อ (6 m³ = 144 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: 0 ท่อ</div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: #ca8a04; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 8</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #ca8a04;">48.38 ชั่วโมง (2 วัน)</strong></div>
                             </div>
                         </div>
 
+                        <!-- KHON SAN CANCER CENTER -->
                         <div class="building-card" style="border-left: 5px solid #a855f7;">
                             <span class="building-badge" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">ศูนย์มะเร็งขอนตาล</span>
-                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">★</span> ศูนย์มะเร็งขอนตาล</h3>
-                            <div style="font-size: 0.9rem; line-height: 1.6;">
-                                <div>• จำนวนท่อทั้งหมด: <strong class="td-khon">42 ท่อ (6 m³)</strong></div>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">★</span> ศูนย์มะเร็งขอนตาล</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊สเฉลี่ย:</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #a855f7;">66.50 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(2.77 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>46.2 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-khon">42 ท่อ (6 m³ = 252 m³)</strong></div>
                                 <div>• ในราว Manifold: <strong>20 ท่อ</strong> | สำรองนอกราว: <strong>22 ท่อ</strong></div>
                                 <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
-                                <div style="font-size: 0.8rem; color: var(--color-khon); margin-top: 0.4rem;">🏥 สำรองจ่ายได้นาน 55 ชั่วโมง (2.29 วัน)</div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: var(--color-khon);">90.97 ชั่วโมง (3.79 วัน)</strong></div>
                             </div>
                         </div>
                     </div>
