@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NKP Automatic Manifold Monitor</title>
+    <style>
+        body { background-color: #f0f0f0; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; margin-top: 50px; }
+        .panel { background-color: #38b6b3; border-radius: 20px; padding: 30px; width: 600px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .header-text { color: #006b6b; font-style: italic; font-weight: bold; font-size: 24px; text-align: center; margin-top: 20px; }
+        .bank-labels { display: flex; justify-content: space-between; padding: 0 60px; margin-bottom: 10px; font-weight: bold; color: #111; }
+        .controls-container { display: flex; justify-content: space-between; align-items: center; }
+        .led-col { display: flex; flex-direction: column; gap: 15px; }
+        .led-row { display: flex; align-items: center; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; }
+        .led-row.left { justify-content: flex-end; }
+        .led-row.right { justify-content: flex-start; }
+        .led { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #222; background-color: #333; margin: 0 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.8); }
+        .led.green.on { background-color: #0f0; box-shadow: 0 0 15px #0f0; }
+        .led.yellow.on { background-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
+        .led.red.on { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+        .lcd-display { background-color: #111; width: 250px; height: 80px; border-radius: 5px; border: 4px solid #222; display: flex; justify-content: center; align-items: center; color: #00ff00; font-family: 'Courier New', monospace; font-size: 22px; font-weight: bold; box-shadow: inset 0 0 10px #000; }
+    </style>
+</head>
+<body>
+    <h2>Oxygen Reserve Monitor (NKP)</h2>
+    <div class="panel">
+        <div class="bank-labels"><span>Left Bank</span><span>Right Bank</span></div>
+        <div class="controls-container">
+            <div class="led-col">
+                <div class="led-row left">In Use <div class="led green" id="l-inuse"></div></div>
+                <div class="led-row left">Standby <div class="led yellow" id="l-standby"></div></div>
+                <div class="led-row left">Empty <div class="led red" id="l-empty"></div></div>
+            </div>
+            <div class="lcd-display" id="lcd-text">LOADING...</div>
+            <div class="led-col">
+                <div class="led-row right"><div class="led green" id="r-inuse"></div> In Use</div>
+                <div class="led-row right"><div class="led yellow" id="r-standby"></div> Standby</div>
+                <div class="led-row right"><div class="led red" id="r-empty"></div> Empty</div>
+            </div>
+        </div>
+        <div class="header-text">Fully Automatic Manifold</div>
+    </div>
+    <script>
+        function updateUI() {
+            fetch('/data')
+                .then(res => res.json())
+                .then(data => {
+                    const lEmpty = data.left_empty === 1;
+                    const rEmpty = data.right_empty === 1;
+                    const activeBank = data.active_bank;
+                    const lcd = document.getElementById('lcd-text');
+                    
+                    document.querySelectorAll('.led').forEach(el => el.classList.remove('on'));
+                    
+                    if (!lEmpty && !rEmpty) {
+                        // เต็มทั้งคู่ ให้ดูว่าฝั่งไหนเป็น In Use
+                        if (activeBank === 1) {
+                            document.getElementById('l-inuse').classList.add('on');
+                            document.getElementById('r-standby').classList.add('on');
+                        } else {
+                            document.getElementById('r-inuse').classList.add('on');
+                            document.getElementById('l-standby').classList.add('on');
+                        }
+                        lcd.style.color = "#00ff00"; 
+                        lcd.innerText = "SYSTEM NORMAL";
+                    } else if (lEmpty && !rEmpty) {
+                        document.getElementById('l-empty').classList.add('on');
+                        document.getElementById('r-inuse').classList.add('on');
+                        lcd.style.color = "#ffaa00"; 
+                        lcd.innerText = "LEFT EMPTY!";
+                    } else if (!lEmpty && rEmpty) {
+                        document.getElementById('l-inuse').classList.add('on');
+                        document.getElementById('r-empty').classList.add('on');
+                        lcd.style.color = "#ffaa00"; 
+                        lcd.innerText = "RIGHT EMPTY!";
+                    } else {
+                        document.getElementById('l-empty').classList.add('on');
+                        document.getElementById('r-empty').classList.add('on');
+                        lcd.style.color = "#ff0000"; 
+                        lcd.innerText = "CRITICAL: EMPTY!";
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+        setInterval(updateUI, 1000);
+    </script>
+</body>
+</html>
