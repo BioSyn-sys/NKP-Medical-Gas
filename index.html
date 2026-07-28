@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NKP Medical Oxygen Analytics Dashboard V9</title>
+    <title>NKP Medical Oxygen Analytics Dashboard V10</title>
     <!-- Fonts & Icons & CDNs -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -171,7 +171,6 @@
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);
         }
 
-        /* Dedicated Left Sidebar Export Excel Button */
         .sidebar-btn-export {
             background: linear-gradient(135deg, #10b981, #059669);
             color: #ffffff;
@@ -330,7 +329,6 @@
     </style>
 </head>
 <body>
-    <!-- Left Sidebar Navigation Bar -->
     <aside class="sidebar" id="appSidebar">
         <div class="sidebar-brand">
             <div class="brand-info">
@@ -367,7 +365,6 @@
                 <span>5. นำเข้า/ส่งออก Excel</span>
             </button>
 
-            <!-- Prominent Export Excel Button in Left Sidebar -->
             <button class="sidebar-btn-export" onclick="exportMonthlyExcel()" title="Export Excel สรุปรายเดือน">
                 <i class="fa-solid fa-file-excel"></i>
                 <span>Export Excel สรุปรายเดือน</span>
@@ -380,10 +377,9 @@
     </aside>
 
     <div class="main-wrapper">
-        <!-- Top Header Bar -->
         <header class="top-header">
             <div class="header-title-box">
-                <h1 id="pageTitleText">NKP Medical Oxygen Analytics Dashboard V9</h1>
+                <h1 id="pageTitleText">NKP Medical Oxygen Analytics Dashboard</h1>
                 <p id="pageSubTitleText">กลุ่มงานโครงสร้างและวิศวกรรมการแพทย์ หมวดงานเครื่องมือแพทย์ โรงพยาบาลนครพิงค์</p>
             </div>
 
@@ -437,7 +433,7 @@
             const sum_cost = sum_total_m3 * 10.90;
 
             rows.push(['']);
-            rows.push(['ยอดยอดรวมสะสมทั้งสิ้น', sum_nkp_m3, sum_khon_m3, sum_total_m3, sum_cost]);
+            rows.push(['ยอดรวมสะสมทั้งสิ้น', sum_nkp_m3, sum_khon_m3, sum_total_m3, sum_cost]);
             rows.push(['ค่าเฉลี่ยต่อเดือน', +(sum_nkp_m3/db.monthly.months.length).toFixed(2), +(sum_khon_m3/db.monthly.months.length).toFixed(2), +(sum_total_m3/db.monthly.months.length).toFixed(2), +(sum_cost/db.monthly.months.length).toFixed(2)]);
             
             rows.push(['']);
@@ -466,7 +462,9 @@
                 toggleIcon.className = 'fa-solid fa-angles-left';
                 localStorage.setItem('sidebarCollapsed', 'false');
             }
-            if (chartObj) setTimeout(() => chartObj.resize(), 300);
+            if (chartObj && (activeTab === 'daily' || activeTab === 'monthly')) {
+                setTimeout(() => chartObj.resize(), 300);
+            }
         }
 
         if (localStorage.getItem('sidebarCollapsed') === 'true') {
@@ -502,7 +500,9 @@
                 icon.className = 'fa-solid fa-sun';
                 text.innerText = 'โหมดสว่าง';
             }
-            if (chartObj) chartObj.update();
+            if (chartObj && (activeTab === 'daily' || activeTab === 'monthly')) {
+                chartObj.update();
+            }
         }
 
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -515,6 +515,13 @@
                 const el = document.getElementById('menu-' + k);
                 if (el) el.classList.toggle('active', k === tabKey);
             });
+            
+            // Clean up chart object if switching away from chart tabs
+            if (chartObj && (tabKey !== 'daily' && tabKey !== 'monthly')) {
+                chartObj.destroy();
+                chartObj = null;
+            }
+            
             renderKPIs();
             renderModule();
         }
@@ -845,8 +852,12 @@
         }
 
         function updateCostCalc() {
-            const loxP = parseFloat(document.getElementById('cost-lox-unit').value) || 10.90;
-            const cylP = parseFloat(document.getElementById('cost-cyl-unit').value) || 100.00;
+            const loxEl = document.getElementById('cost-lox-unit');
+            const cylEl = document.getElementById('cost-cyl-unit');
+            if (!loxEl || !cylEl) return;
+
+            const loxP = parseFloat(loxEl.value) || 10.90;
+            const cylP = parseFloat(cylEl.value) || 100.00;
             const cylV = 6.0;
 
             const cylPerM3 = cylP / cylV;
@@ -861,12 +872,19 @@
             const dailySave = dailyCostCyl - dailyCostLOX;
             const yearlySave = dailySave * 365;
 
-            document.getElementById('res-cyl-m3').innerText = cylPerM3.toFixed(2) + " บาท/m³";
-            document.getElementById('res-lox-equiv').innerText = loxEquiv.toFixed(2) + " บาท";
-            document.getElementById('res-save-cyl').innerText = "ประหยัด " + savePerCyl.toFixed(2) + " บาท";
-            document.getElementById('res-pct-save').innerText = pctSave.toFixed(2) + "%";
-            document.getElementById('res-daily-save').innerText = dailySave.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " บาท/วัน";
-            document.getElementById('res-yearly-save').innerText = yearlySave.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " บาท/ปี";
+            const r1 = document.getElementById('res-cyl-m3');
+            const r2 = document.getElementById('res-lox-equiv');
+            const r3 = document.getElementById('res-save-cyl');
+            const r4 = document.getElementById('res-pct-save');
+            const r5 = document.getElementById('res-daily-save');
+            const r6 = document.getElementById('res-yearly-save');
+
+            if (r1) r1.innerText = cylPerM3.toFixed(2) + " บาท/m³";
+            if (r2) r2.innerText = loxEquiv.toFixed(2) + " บาท";
+            if (r3) r3.innerText = "ประหยัด " + savePerCyl.toFixed(2) + " บาท";
+            if (r4) r4.innerText = pctSave.toFixed(2) + "%";
+            if (r5) r5.innerText = dailySave.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " บาท/วัน";
+            if (r6) r6.innerText = yearlySave.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " บาท/ปี";
         }
 
         function renderEmergencyModule() {
@@ -964,9 +982,14 @@
         }
 
         function updateEmergencyCalc() {
-            const target = document.getElementById('em-target').value;
-            const level = document.getElementById('em-level').value;
-            const days = parseFloat(document.getElementById('em-days').value) || 1;
+            const targetEl = document.getElementById('em-target');
+            const levelEl = document.getElementById('em-level');
+            const daysEl = document.getElementById('em-days');
+            if (!targetEl || !levelEl || !daysEl) return;
+
+            const target = targetEl.value;
+            const level = levelEl.value;
+            const days = parseFloat(daysEl.value) || 1;
 
             let dailyM3 = 0;
             if (target === 'nkp') {
@@ -985,13 +1008,21 @@
             const ratePerHour = Math.ceil(cyl6 / (days * 24));
             const costCyl = cyl6 * 100;
 
-            document.getElementById('em-res-m3').innerText = totalM3.toLocaleString(undefined, {maximumFractionDigits: 2}) + " m³";
-            document.getElementById('em-res-lox-l').innerText = loxLiters.toLocaleString(undefined, {maximumFractionDigits: 2}) + " ลิตรเหลว";
-            document.getElementById('em-res-lox-kg').innerText = loxKg.toLocaleString(undefined, {maximumFractionDigits: 2}) + " Kg";
-            document.getElementById('em-res-cyl6').innerText = cyl6.toLocaleString() + " ท่อ";
-            document.getElementById('em-res-cyl7').innerText = cyl7.toLocaleString() + " ท่อ";
-            document.getElementById('em-res-rate').innerText = ratePerHour.toLocaleString() + " ท่อ / ชั่วโมง";
-            document.getElementById('em-res-cost').innerText = costCyl.toLocaleString() + " บาท";
+            const r1 = document.getElementById('em-res-m3');
+            const r2 = document.getElementById('em-res-lox-l');
+            const r3 = document.getElementById('em-res-lox-kg');
+            const r4 = document.getElementById('em-res-cyl6');
+            const r5 = document.getElementById('em-res-cyl7');
+            const r6 = document.getElementById('em-res-rate');
+            const r7 = document.getElementById('em-res-cost');
+
+            if (r1) r1.innerText = totalM3.toLocaleString(undefined, {maximumFractionDigits: 2}) + " m³";
+            if (r2) r2.innerText = loxLiters.toLocaleString(undefined, {maximumFractionDigits: 2}) + " ลิตรเหลว";
+            if (r3) r3.innerText = loxKg.toLocaleString(undefined, {maximumFractionDigits: 2}) + " Kg";
+            if (r4) r4.innerText = cyl6.toLocaleString() + " ท่อ";
+            if (r5) r5.innerText = cyl7.toLocaleString() + " ท่อ";
+            if (r6) r6.innerText = ratePerHour.toLocaleString() + " ท่อ / ชั่วโมง";
+            if (r7) r7.innerText = costCyl.toLocaleString() + " บาท";
         }
 
         function renderImportModule() {
@@ -1000,6 +1031,9 @@
                 <div class="content-card">
                     <div class="section-title">
                         <div><i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i> โมดูลนำเข้า & ส่งออกไฟล์ Excel (Excel Import / Export)</div>
+                        <button class="btn-export-excel" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="exportMonthlyExcel()">
+                            <i class="fa-solid fa-file-excel"></i> Export Excel รายงานสรุป (เฉพาะ m³)
+                        </button>
                     </div>
                     <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
                         <i class="fa-file-excel" style="font-size: 3.5rem; color: var(--accent-emerald); margin-bottom: 1rem;"></i>
@@ -1014,76 +1048,6 @@
         function handleFileSelect(e) {
             alert("นำเข้าไฟล์ Excel สำเร็จ! ฐานข้อมูลอัปเดตเรียบร้อยแล้ว");
             switchTab('daily');
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('appSidebar');
-            const toggleIcon = document.getElementById('toggleIcon');
-            sidebar.classList.toggle('collapsed');
-
-            if (sidebar.classList.contains('collapsed')) {
-                toggleIcon.className = 'fa-solid fa-angles-right';
-                localStorage.setItem('sidebarCollapsed', 'true');
-            } else {
-                toggleIcon.className = 'fa-solid fa-angles-left';
-                localStorage.setItem('sidebarCollapsed', 'false');
-            }
-            if (chartObj) setTimeout(() => chartObj.resize(), 300);
-        }
-
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            document.getElementById('appSidebar').classList.add('collapsed');
-            document.getElementById('toggleIcon').className = 'fa-solid fa-angles-right';
-        }
-
-        function updateLiveClock() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('th-TH', { hour12: false });
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateStr = now.toLocaleDateString('th-TH', dateOptions);
-
-            document.getElementById('clockTime').innerText = timeStr;
-            document.getElementById('clockDate').innerText = dateStr;
-        }
-        setInterval(updateLiveClock, 1000);
-        updateLiveClock();
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-
-            const icon = document.getElementById('themeIcon');
-            const text = document.getElementById('themeText');
-            if (newTheme === 'dark') {
-                icon.className = 'fa-solid fa-moon';
-                text.innerText = 'โหมดมืด';
-            } else {
-                icon.className = 'fa-solid fa-sun';
-                text.innerText = 'โหมดสว่าง';
-            }
-            if (chartObj) chartObj.update();
-        }
-
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-
-        function switchTab(tabKey) {
-            activeTab = tabKey;
-            const menuKeys = ['daily', 'monthly', 'cost', 'emergency', 'import'];
-            menuKeys.forEach(k => {
-                const el = document.getElementById('menu-' + k);
-                if (el) el.classList.toggle('active', k === tabKey);
-            });
-            renderKPIs();
-            renderModule();
-        }
-
-        function switchDailyUnit(unit) {
-            dailyUnit = unit;
-            renderDailyModule();
         }
 
         window.onload = function() {
