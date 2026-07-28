@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Prevent Chrome / Browser Stale Cache -->
+    <!-- Anti-Cache Control -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -175,7 +175,6 @@
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);
         }
 
-        /* Dedicated Left Sidebar Export Excel Button */
         .sidebar-btn-export {
             background: linear-gradient(135deg, #10b981, #059669);
             color: #ffffff;
@@ -335,6 +334,76 @@
         .tag-peak { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.75rem; }
         .drop-zone { border: 2px dashed var(--primary-cyan); border-radius: 16px; padding: 2.5rem; text-align: center; background: rgba(6, 182, 212, 0.04); cursor: pointer; }
         #fileInput { display: none; }
+
+        /* HOVER MAGNIFIER & BUILDING MAP STYLES */
+        .img-magnifier-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #000000;
+        }
+        .img-magnifier-glass {
+            position: absolute;
+            border: 3px solid var(--primary-cyan);
+            border-radius: 50%;
+            cursor: none;
+            width: 180px;
+            height: 180px;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+            display: none;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .building-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .building-card {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.35 ease;
+        }
+
+        .building-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px var(--shadow-color);
+            border-color: var(--primary-cyan);
+        }
+
+        .building-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 8px;
+        }
+
+        .seq-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--primary-cyan);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -366,9 +435,9 @@
                 <i class="fa-solid fa-calculator" style="color: var(--accent-amber);"></i>
                 <span>3. เปรียบเทียบต้นทุน (LOX/6Q)</span>
             </button>
-            <button class="menu-item" id="menu-emergency" onclick="switchTab('emergency')" title="4. แผนก๊าซสำรองฉุกเฉิน">
+            <button class="menu-item" id="menu-emergency" onclick="switchTab('emergency')" title="4. แผนก๊าซสำรอง & ผังจ่ายกลาง">
                 <i class="fa-solid fa-shield-cat" style="color: var(--accent-rose);"></i>
-                <span>4. แผนก๊าซสำรองฉุกเฉิน</span>
+                <span>4. แผนก๊าซสำรอง & ผังจ่ายกลาง</span>
             </button>
             <button class="menu-item" id="menu-import" onclick="switchTab('import')" title="5. นำเข้า/ส่งออก Excel">
                 <i class="fa-solid fa-file-import" style="color: var(--accent-purple);"></i>
@@ -909,9 +978,145 @@
             if (!content) return;
 
             content.innerHTML = `
+                <!-- MASTER LAYOUT DIAGRAM WITH LIVE MAGNIFIER -->
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-shield-cat" style="color: var(--accent-rose);"></i> เครื่องมือคำนวณและประเมินแผนก๊าซสำรองฉุกเฉิน (Emergency Reserve Calculator)</div>
+                        <div><i class="fa-solid fa-map-location-dot" style="color: var(--primary-cyan);"></i> 1. ผังตำแหน่งระบบจ่ายกลางก๊าซแบบท่อบรรจุสำหรับก๊าซออกซิเจน (Master Central Layout)</div>
+                        <span style="font-size: 0.82rem; color: var(--primary-cyan); font-weight: 500;"><i class="fa-solid fa-magnifying-glass-plus"></i> เลื่อนเมาส์ชี้บนรูปภาพเพื่อเปิดกล้องซูมขยายสด</span>
+                    </div>
+                    <div class="img-magnifier-container" id="magContainer1">
+                        <div class="img-magnifier-glass" id="magGlass1"></div>
+                        <img id="magImg1" src="master_manifold_layout.png" alt="ผังตำแหน่งระบบจ่ายกลางก๊าซแบบท่อบรรจุสำหรับก๊าซออกซิเจน" style="width: 100%; display: block;">
+                    </div>
+                </div>
+
+                <!-- O2 PIPING MAP DIAGRAM WITH LIVE MAGNIFIER -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-diagram-project" style="color: var(--accent-emerald);"></i> 2. ผังท่อส่งออกซิเจนทางการแพทย์ รพ.นครพิงค์ (Medical Gas Piping Network)</div>
+                        <span style="font-size: 0.82rem; color: var(--accent-emerald); font-weight: 500;"><i class="fa-solid fa-magnifying-glass-plus"></i> เลื่อนเมาส์ชี้บนรูปภาพเพื่อเปิดกล้องซูมขยายสด</span>
+                    </div>
+                    <div class="img-magnifier-container" id="magContainer2">
+                        <div class="img-magnifier-glass" id="magGlass2"></div>
+                        <img id="magImg2" src="o2_piping_map.jpg" alt="ผังท่อส่งออกซิเจนทางการแพทย์" style="width: 100%; display: block;">
+                    </div>
+                </div>
+
+                <!-- BUILDING CAMPUS MAP & CYLINDER COUNT -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-building-circle-check" style="color: var(--accent-amber);"></i> 3. รายละเอียดผังอาคาร และ จำนวนท่อสำรองประจำสเตชั่น (8 อาคาร + ศูนย์มะเร็งขอนตาล)</div>
+                    </div>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        เรียงลำดับการสลับเปิดวาล์วฉุกเฉิน 1 - 8 กรณีระบบออกซิเจนเหลว (LOX) ขัดข้อง (เพียงเลื่อนเมาส์ชี้ที่การ์ดเพื่อขยายดูรายละเอียด):
+                    </p>
+
+                    <div class="building-grid">
+                        <div class="building-card" style="border-left: 5px solid #06b6d4;">
+                            <span class="building-badge" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">ลำดับที่ 1 (Auto Standby)</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle">1</span> ตึกฟ้า (อาคาร 16)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">24 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: var(--primary-cyan); margin-top: 0.4rem;">⚡ ทำงานจ่ายแก๊สเข้าแทนอัตโนมัติเป็นจุดแรกเมื่อ LOX ตัด</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #ec4899;">
+                            <span class="building-badge" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">ลำดับที่ 2</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">2</span> ตึกชมพู (อาคาร 12)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">19 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 19) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: #ec4899; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 2 หลังตรวจสอบตึก 16</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #10b981;">
+                            <span class="building-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">ลำดับที่ 3</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">3</span> ตึกเขียว (อาคาร 14)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong style="color: var(--accent-emerald);">20 ท่อ (7 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
+                                <div style="font-size: 0.8rem; color: var(--accent-emerald); margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 3</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #f8fafc;">
+                            <span class="building-badge" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">ลำดับที่ 4</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">4</span> ตึกขาว (อาคาร 11)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">24 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: #f8fafc; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 4</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #f43f5e;">
+                            <span class="building-badge" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">ลำดับที่ 5</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">5</span> ตึก อบ. / อุบัติเหตุ (อาคาร 1)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong style="color: var(--accent-rose);">30 ท่อ (7 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: <strong>6 ท่อ</strong></div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
+                                <div style="font-size: 0.8rem; color: var(--accent-rose); margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 5</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #f97316;">
+                            <span class="building-badge" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">ลำดับที่ 6</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">6</span> ตึกส้ม (อาคาร 10)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">14 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> (ใส่ 14) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: #f97316; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 6</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #eab308;">
+                            <span class="building-badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">ลำดับที่ 7</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">7</span> ตึกเหลือง (อาคาร 9)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">7 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 7) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: #eab308; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 7</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #ca8a04;">
+                            <span class="building-badge" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">ลำดับที่ 8</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">8</span> ตึก OPD / ผู้ป่วยนอก (อาคาร 3)</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-nkp">24 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | สำรองนอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: #ca8a04; margin-top: 0.4rem;">🛠️ ช่างเข้าเปิดวาล์วเป็นลำดับที่ 8</div>
+                            </div>
+                        </div>
+
+                        <div class="building-card" style="border-left: 5px solid #a855f7;">
+                            <span class="building-badge" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">ศูนย์มะเร็งขอนตาล</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;"><span class="seq-circle" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">★</span> ศูนย์มะเร็งขอนตาล</h3>
+                            <div style="font-size: 0.9rem; line-height: 1.6;">
+                                <div>• จำนวนท่อทั้งหมด: <strong class="td-khon">42 ท่อ (6 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> | สำรองนอกราว: <strong>22 ท่อ</strong></div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div style="font-size: 0.8rem; color: var(--color-khon); margin-top: 0.4rem;">🏥 สำรองจ่ายได้นาน 55 ชั่วโมง (2.29 วัน)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMERGENCY CALCULATOR -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-calculator" style="color: var(--accent-rose);"></i> 4. เครื่องมือคำนวณประเมินแผนแก๊สสำรองฉุกเฉิน (Emergency Calculator)</div>
                     </div>
                     <div class="calc-grid">
                         <div class="calc-box">
@@ -970,34 +1175,46 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="content-card">
-                    <div class="section-title">
-                        <div><i class="fa-solid fa-boxes-stacked" style="color: var(--primary-cyan);"></i> ตารางรายละเอียดคลังท่อสำรองประจำสเตชั่น (แบ่งสีแยก 2 สถานที่)</div>
-                    </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ลำดับ</th>
-                                    <th>สถานที่ / สเตชั่นจ่ายประจำอาคาร</th>
-                                    <th>จำนวนท่อ (6 m³)</th>
-                                    <th>จำนวนท่อ (7 m³)</th>
-                                    <th>รวมจำนวนท่อ</th>
-                                    <th>ปริมาตรแก๊สสำรอง</th>
-                                    <th>ระยะเวลาจ่ายสำรองฉุกเฉิน</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>1</td><td><strong class="td-nkp">โรงพยาบาลนครพิงค์ (ตึก 1 - 7 รวม 7 สเตชั่น)</strong></td><td>100 ท่อ</td><td>44 ท่อ</td><td><strong class="td-nkp">144 ท่อ</strong></td><td>908 m³</td><td><strong class="td-nkp">9.09 ชั่วโมง</strong></td></tr>
-                                <tr><td>2</td><td><strong class="td-khon">ศูนย์มะเร็งขอนตาล (สเตชั่น 8)</strong></td><td>12 ท่อ</td><td>6 ท่อ</td><td><strong class="td-khon">18 ท่อ</strong></td><td>114 m³</td><td><strong class="td-khon">55.08 ชั่วโมง (2.29 วัน)</strong></td></tr>
-                                <tr style="background: rgba(16, 185, 129, 0.1);"><td>-</td><td><strong class="td-total">ยอดรวมคลังท่อสำรองทั้งองค์กร</strong></td><td><strong>112 ท่อ</strong></td><td><strong>50 ท่อ</strong></td><td><strong class="td-total">162 ท่อ</strong></td><td><strong>1,022 m³</strong></td><td><strong class="td-total">9.44 ชั่วโมง</strong></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             `;
             updateEmergencyCalc();
+
+            // Enable Magnifier Lenses for both diagrams
+            setTimeout(() => {
+                enableMagnifier("magImg1", "magGlass1", "magContainer1");
+                enableMagnifier("magImg2", "magGlass2", "magContainer2");
+            }, 200);
+        }
+
+        function enableMagnifier(imgID, glassID, containerID) {
+            const img = document.getElementById(imgID);
+            const glass = document.getElementById(glassID);
+            const container = document.getElementById(containerID);
+            if (!img || !glass || !container) return;
+
+            const zoom = 2.2;
+            glass.style.backgroundImage = "url('" + img.src + "')";
+            glass.style.backgroundRepeat = "no-repeat";
+            glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+
+            container.onmouseenter = function() { glass.style.display = "block"; };
+            container.onmouseleave = function() { glass.style.display = "none"; };
+            container.onmousemove = function(e) {
+                const rect = img.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+
+                let w = glass.offsetWidth / 2;
+                let h = glass.offsetHeight / 2;
+
+                if (x > img.width - w) x = img.width - w;
+                if (x < w) x = w;
+                if (y > img.height - h) y = img.height - h;
+                if (y < h) y = h;
+
+                glass.style.left = (x - w) + "px";
+                glass.style.top = (y - h) + "px";
+                glass.style.backgroundPosition = "-" + ((x * zoom) - w) + "px -" + ((y * zoom) - h) + "px";
+            };
         }
 
         function updateEmergencyCalc() {
