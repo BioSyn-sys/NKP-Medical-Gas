@@ -502,7 +502,12 @@
         // Load persisted DB from localStorage on startup
         (function loadPersistedDB() {
             try {
-                const saved = localStorage.getItem('nkp_o2_db');
+                // Invalidate stale legacy storage keys
+                localStorage.removeItem('nkp_o2_db');
+                localStorage.removeItem('nkp_o2_db_v2');
+                localStorage.removeItem('nkp_o2_db_v3');
+
+                const saved = localStorage.getItem('nkp_o2_db_v4');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     if (parsed && parsed.daily && parsed.monthly) {
@@ -668,24 +673,34 @@
                 `;
             } else if (activeTab === 'monthly') {
                 const m = db.monthly;
+                const totalM3Sum = m.total_m3.reduce((a, b) => a + b, 0) || 1;
+                const nkpM3Sum = m.nkp_m3.reduce((a, b) => a + b, 0);
+                const khonM3Sum = m.khon_m3.reduce((a, b) => a + b, 0);
+                const nkpPct = ((nkpM3Sum / totalM3Sum) * 100).toFixed(2);
+                const khonPct = ((khonM3Sum / totalM3Sum) * 100).toFixed(2);
+                const avgNkpM3 = (nkpM3Sum / m.months.length).toFixed(2);
+                const avgKhonM3 = (khonM3Sum / m.months.length).toFixed(2);
+                const firstMonth = m.months[0] || '';
+                const lastMonth = m.months[m.months.length - 1] || '';
+
                 grid.innerHTML = `
                     <div class="kpi-card" style="border-left: 4px solid var(--primary-cyan);">
                         <i class="fa-solid fa-calendar-check kpi-icon" style="color: var(--primary-cyan);"></i>
-                        <div class="kpi-label">ปริมาณการใช้รวมเฉลี่ยรายเดือน (35 เดือน)</div>
+                        <div class="kpi-label">ปริมาณการใช้รวมเฉลี่ยรายเดือน (${m.months.length} เดือน)</div>
                         <div class="kpi-value">${m.avg_total_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³/เดือน</span></div>
-                        <div class="kpi-subtext">ข้อมูลสะสม ก.ย. 66 - ก.ค. 69 (ปัจจุบัน)</div>
+                        <div class="kpi-subtext">ข้อมูลสะสม ${firstMonth} - ${lastMonth}</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-nkp);">
                         <i class="fa-solid fa-hospital kpi-icon" style="color: var(--color-nkp);"></i>
                         <div class="kpi-label">สัดส่วน รพ.นครพิงค์ (ถังหลัก)</div>
-                        <div class="kpi-value" style="color: var(--color-nkp);">97.28%</div>
-                        <div class="kpi-subtext">เฉลี่ย 67,820.50 m³/เดือน</div>
+                        <div class="kpi-value" style="color: var(--color-nkp);">${nkpPct}%</div>
+                        <div class="kpi-subtext">เฉลี่ย ${Number(avgNkpM3).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} m³/เดือน</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-khon);">
                         <i class="fa-solid fa-notes-medical kpi-icon" style="color: var(--color-khon);"></i>
                         <div class="kpi-label">สัดส่วน ศูนย์มะเร็งขอนตาล</div>
-                        <div class="kpi-value" style="color: var(--color-khon);">2.72%</div>
-                        <div class="kpi-subtext">เฉลี่ย 2,185.20 m³/เดือน</div>
+                        <div class="kpi-value" style="color: var(--color-khon);">${khonPct}%</div>
+                        <div class="kpi-subtext">เฉลี่ย ${Number(avgKhonM3).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} m³/เดือน</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--accent-amber);">
                         <i class="fa-solid fa-chart-line-up kpi-icon" style="color: var(--accent-amber);"></i>
@@ -1366,7 +1381,7 @@
             const content = document.getElementById('moduleContent');
             if (!content) return;
 
-            const isCustomData = !!localStorage.getItem('nkp_o2_db');
+            const isCustomData = !!localStorage.getItem('nkp_o2_db_v4');
 
             content.innerHTML = `
                 <div class="content-card">
@@ -1429,7 +1444,7 @@
 
         function resetToDefaultData() {
             if (confirm("คุณต้องการล้างข้อมูลที่อัปโหลดและคืนค่าเป็นฐานข้อมูลเริ่มต้นหรือไม่?")) {
-                localStorage.removeItem('nkp_o2_db');
+                localStorage.removeItem('nkp_o2_db_v4');
                 db = JSON.parse(JSON.stringify(initialDefaultDB));
                 renderKPIs();
                 renderModule();
@@ -1468,7 +1483,7 @@
                     if (processedCount === fileList.length) {
                         if (successMsgs.length > 0) {
                             recalculateAllDB();
-                            localStorage.setItem('nkp_o2_db', JSON.stringify(db));
+                            localStorage.setItem('nkp_o2_db_v4', JSON.stringify(db));
                             renderKPIs();
                             renderModule();
                             let msg = "🎉 นำเข้าและประมวลผลไฟล์ Excel สำเร็จ!\n\n" + successMsgs.join("\n");
