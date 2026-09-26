@@ -2,15 +2,14 @@
 <html lang="th" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Anti-Cache Control -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>NKP Medical Oxygen Analytics Dashboard</title>
-    
+    <title>NKP Medical Oxygen Analytics Dashboard V14</title>
     <!-- Fonts & Icons & CDNs -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -19,9 +18,8 @@
         :root[data-theme="dark"] {
             --bg-body: #070b14;
             --bg-sidebar: #0e1626;
-            --bg-card: rgba(14, 22, 38, 0.85);
+            --bg-card: rgba(20, 30, 48, 0.75);
             --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(6, 182, 212, 0.3);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --primary-cyan: #06b6d4;
@@ -46,7 +44,6 @@
             --bg-sidebar: #ffffff;
             --bg-card: #ffffff;
             --border-color: #e2e8f0;
-            --border-hover: #0284c7;
             --text-main: #0f172a;
             --text-muted: #64748b;
             --primary-cyan: #0284c7;
@@ -70,8 +67,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Prompt', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, width 0.3s ease;
         }
 
         body {
@@ -82,11 +79,8 @@
             overflow-x: hidden;
         }
 
-        /* -------------------------------------------------------------
-           COLLAPSIBLE SIDEBAR MENU (ย่อ-ขยายได้ ลื่นไหล 144Hz)
-           ------------------------------------------------------------- */
         .sidebar {
-            width: 270px;
+            width: 290px;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
             padding: 1.25rem 0.85rem;
@@ -98,47 +92,37 @@
             height: 100vh;
             z-index: 100;
             box-shadow: 4px 0 20px var(--shadow-color);
-            will-change: width;
-            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar.collapsed { 
-            width: 78px; 
-        }
+        .sidebar.collapsed { width: 78px; }
 
         .sidebar-brand {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: 1.1rem;
+            padding-bottom: 1.25rem;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1.1rem;
+            margin-bottom: 1.25rem;
         }
 
-        .brand-info { 
-            display: flex; 
-            align-items: center; 
-            gap: 0.75rem; 
-            overflow: hidden; 
-            white-space: nowrap;
-        }
+        .brand-info { display: flex; align-items: center; gap: 0.75rem; overflow: hidden; }
 
         .brand-logo {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             background: linear-gradient(135deg, var(--primary-cyan), var(--accent-emerald));
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);
             flex-shrink: 0;
         }
 
-        .brand-text h2 { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
-        .brand-text p { font-size: 0.72rem; color: var(--text-muted); }
+        .brand-text h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .brand-text p { font-size: 0.75rem; color: var(--text-muted); }
         .sidebar.collapsed .brand-text { display: none; }
 
         .sidebar-toggle-btn {
@@ -147,64 +131,41 @@
             color: var(--primary-cyan);
             width: 32px;
             height: 32px;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: transform 0.2s ease, background 0.2s ease;
-        }
-        .sidebar-toggle-btn:hover {
-            transform: scale(1.05);
-            background: rgba(6, 182, 212, 0.25);
         }
 
-        .sidebar-menu { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 0.45rem; 
-            flex-grow: 1; 
-        }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
 
         .menu-item {
             background: transparent;
-            border: 1px solid transparent;
+            border: none;
             color: var(--text-muted);
-            padding: 0.75rem 0.9rem;
-            font-size: 0.88rem;
+            padding: 0.85rem 1rem;
+            font-size: 0.92rem;
             border-radius: 12px;
             cursor: pointer;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 0.9rem;
             text-align: left;
             width: 100%;
             white-space: nowrap;
-            overflow: hidden;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .menu-item i { 
-            font-size: 1.15rem; 
-            width: 24px; 
-            text-align: center; 
-            flex-shrink: 0; 
-        }
-
+        .menu-item i { font-size: 1.25rem; width: 26px; text-align: center; flex-shrink: 0; }
         .sidebar.collapsed .menu-item span { display: none; }
-        .sidebar.collapsed .menu-item { justify-content: center; padding: 0.75rem 0; }
+        .sidebar.collapsed .menu-item { justify-content: center; padding: 0.85rem 0; }
 
         .menu-item:hover {
             background: rgba(6, 182, 212, 0.12);
             color: var(--primary-cyan);
-            border-color: rgba(6, 182, 212, 0.2);
-            transform: translateX(3px);
-        }
-
-        .sidebar.collapsed .menu-item:hover {
-            transform: none;
+            transform: translateX(4px);
         }
 
         .menu-item.active {
@@ -212,40 +173,36 @@
             color: #ffffff;
             font-weight: 600;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.35);
-            border-color: rgba(255, 255, 255, 0.2);
         }
-        .menu-item.active i { color: #ffffff !important; }
 
         .sidebar-btn-export {
             background: linear-gradient(135deg, #10b981, #059669);
             color: #ffffff;
             border: none;
-            padding: 0.75rem 0.9rem;
-            font-size: 0.88rem;
+            padding: 0.85rem 1rem;
+            font-size: 0.92rem;
             border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 0.9rem;
             width: 100%;
-            margin-top: 0.4rem;
+            margin-top: 0.5rem;
             margin-bottom: 0.75rem;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
             white-space: nowrap;
-            overflow: hidden;
-            transition: all 0.2s ease;
         }
 
-        .sidebar-btn-export i { font-size: 1.15rem; width: 24px; text-align: center; flex-shrink: 0; }
+        .sidebar-btn-export i { font-size: 1.25rem; width: 26px; text-align: center; flex-shrink: 0; }
         .sidebar.collapsed .sidebar-btn-export span { display: none; }
-        .sidebar.collapsed .sidebar-btn-export { justify-content: center; padding: 0.75rem 0; }
-        .sidebar-btn-export:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+        .sidebar.collapsed .sidebar-btn-export { justify-content: center; padding: 0.85rem 0; }
+        .sidebar-btn-export:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
 
         .sidebar-footer {
-            padding-top: 0.85rem;
+            padding-top: 1rem;
             border-top: 1px solid var(--border-color);
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-align: center;
             line-height: 1.4;
@@ -254,20 +211,12 @@
         }
         .sidebar.collapsed .sidebar-footer { display: none; }
 
-        /* -------------------------------------------------------------
-           MAIN CONTENT LAYOUT & TOP HEADER
-           ------------------------------------------------------------- */
-        .main-wrapper { 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            min-width: 0; 
-        }
+        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
 
         .top-header {
             background: var(--bg-sidebar);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.9rem 1.75rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -276,107 +225,84 @@
             z-index: 90;
             box-shadow: 0 4px 15px var(--shadow-color);
             flex-wrap: wrap;
-            gap: 0.85rem;
+            gap: 1rem;
         }
 
-        .header-title-box h1 { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
-        .header-title-box p { font-size: 0.78rem; color: var(--text-muted); }
+        .header-title-box h1 { font-size: 1.35rem; font-weight: 700; color: var(--text-main); }
+        .header-title-box p { font-size: 0.82rem; color: var(--text-muted); }
 
-        .header-controls { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .header-controls { display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap; }
 
         .live-clock-card {
             background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(16, 185, 129, 0.12));
             border: 1px solid var(--primary-cyan);
             border-radius: 12px;
-            padding: 0.4rem 0.85rem;
+            padding: 0.45rem 1rem;
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.75rem;
         }
 
-        .clock-icon { font-size: 1.2rem; color: var(--primary-cyan); }
-        .clock-time { font-size: 1.05rem; font-weight: 700; color: var(--text-main); font-family: monospace; }
-        .clock-date { font-size: 0.72rem; color: var(--text-muted); }
+        .clock-icon { font-size: 1.4rem; color: var(--primary-cyan); }
+        .clock-time { font-size: 1.15rem; font-weight: 700; color: var(--text-main); font-family: monospace; }
+        .clock-date { font-size: 0.75rem; color: var(--text-muted); }
 
         .theme-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 0.45rem 0.85rem;
+            padding: 0.5rem 0.9rem;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.45rem;
-            transition: background 0.2s ease;
-        }
-        .theme-toggle-btn:hover { background: rgba(6, 182, 212, 0.15); }
-
-        .content-body { 
-            padding: 1.5rem; 
-            flex-grow: 1; 
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
+            gap: 0.5rem;
         }
 
-        /* -------------------------------------------------------------
-           KPI CARDS & CONTENT CARDS
-           ------------------------------------------------------------- */
-        .kpi-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
-            gap: 1.1rem; 
-            margin-bottom: 1.35rem; 
-        }
+        .content-body { padding: 1.75rem 2rem; flex-grow: 1; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
 
         .kpi-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.15rem 1.35rem;
+            padding: 1.25rem 1.5rem;
             position: relative;
             box-shadow: 0 4px 15px var(--shadow-color);
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--border-hover);
         }
 
-        .kpi-icon { position: absolute; top: 1.15rem; right: 1.15rem; font-size: 1.7rem; opacity: 0.35; }
-        .kpi-label { color: var(--text-muted); font-size: 0.82rem; font-weight: 500; }
-        .kpi-value { font-size: 1.75rem; font-weight: 700; margin: 0.25rem 0; }
-        .kpi-subtext { font-size: 0.78rem; color: var(--text-muted); }
+        .kpi-icon { position: absolute; top: 1.25rem; right: 1.25rem; font-size: 1.8rem; opacity: 0.3; }
+        .kpi-label { color: var(--text-muted); font-size: 0.88rem; font-weight: 500; }
+        .kpi-value { font-size: 1.9rem; font-weight: 700; margin: 0.3rem 0; }
+        .kpi-subtext { font-size: 0.82rem; color: var(--text-muted); }
 
         .content-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.35rem;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
             box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .section-title {
-            font-size: 1.05rem;
+            font-size: 1.15rem;
             font-weight: 600;
-            margin-bottom: 1.15rem;
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.5rem;
+            gap: 0.6rem;
             flex-wrap: wrap;
         }
 
-        .unit-selector { display: flex; gap: 0.3rem; background: var(--input-bg); padding: 0.2rem; border-radius: 10px; border: 1px solid var(--border-color); }
-        .btn-unit { background: transparent; border: none; color: var(--text-muted); padding: 0.3rem 0.65rem; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
+        .unit-selector { display: flex; gap: 0.35rem; background: var(--input-bg); padding: 0.25rem; border-radius: 10px; border: 1px solid var(--border-color); }
+        .btn-unit { background: transparent; border: none; color: var(--text-muted); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
         .btn-unit.active { background: var(--primary-cyan); color: #000000; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4); }
 
         .th-nkp { background: var(--bg-nkp) !important; color: var(--color-nkp) !important; border-bottom: 2px solid var(--color-nkp); }
@@ -387,31 +313,114 @@
         .td-khon { color: var(--color-khon); font-weight: 600; }
         .td-total { color: var(--color-total); font-weight: 700; }
 
-        .chart-container { position: relative; height: 380px; width: 100%; }
+        .chart-container { position: relative; height: 420px; width: 100%; }
 
-        .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
-        .calc-box { background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.25rem; }
-        .form-group { margin-bottom: 1.1rem; }
-        .form-label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem; font-weight: 500; }
-        .form-control { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.55rem 0.85rem; color: var(--text-main); font-size: 0.95rem; outline: none; }
+        .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .calc-box { background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 500; }
+        .form-control { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.65rem 1rem; color: var(--text-main); font-size: 1rem; outline: none; }
 
-        .res-row { display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 0; border-bottom: 1px dashed var(--border-color); }
-        .res-label { font-size: 0.85rem; color: var(--text-muted); }
-        .res-val { font-size: 1.05rem; font-weight: 700; color: var(--primary-cyan); }
+        .res-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px dashed var(--border-color); }
+        .res-label { font-size: 0.92rem; color: var(--text-muted); }
+        .res-val { font-size: 1.15rem; font-weight: 700; color: var(--primary-cyan); }
 
-        .table-wrapper { overflow-x: auto; max-height: 420px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-        th { background: var(--table-header-bg); color: var(--primary-cyan); padding: 0.75rem 0.85rem; font-weight: 600; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-color); }
-        td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border-color); }
+        .table-wrapper { overflow-x: auto; max-height: 440px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th { background: var(--table-header-bg); color: var(--primary-cyan); padding: 0.85rem 1rem; font-weight: 600; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-color); }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); }
         tr:hover td { background: rgba(6, 182, 212, 0.04); }
 
-        .tag-peak { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; }
-        .drop-zone { border: 2px dashed var(--primary-cyan); border-radius: 16px; padding: 2rem; text-align: center; background: rgba(6, 182, 212, 0.04); cursor: pointer; }
+        .tag-peak { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.75rem; }
+        .badge-pm-table { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); padding: 0.2rem 0.55rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; }
+        .badge-current-day { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid var(--accent-emerald); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .pm-badge-pass { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem; display: inline-block; }
+        .pm-badge-warn { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem; display: inline-block; }
+        .doc-link-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.15rem; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: all 0.25s; cursor: pointer; }
+        .doc-link-btn:hover { border-color: var(--primary-cyan); color: var(--primary-cyan); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2); }
+        .drop-zone { border: 2px dashed var(--primary-cyan); border-radius: 16px; padding: 2.5rem; text-align: center; background: rgba(6, 182, 212, 0.04); cursor: pointer; }
         #fileInput { display: none; }
 
-        /* -------------------------------------------------------------
-           MOBILE BOTTOM NAVIGATION (OPTIMIZED FOR XIAOMI MI 10T PRO)
-           ------------------------------------------------------------- */
+        /* HOVER MAGNIFIER & BUILDING MAP STYLES */
+        .img-magnifier-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #000000;
+        }
+        .img-magnifier-glass {
+            position: absolute;
+            border: 3px solid var(--primary-cyan);
+            border-radius: 50%;
+            cursor: none;
+            width: 180px;
+            height: 180px;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+            display: none;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .building-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .building-card {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.35rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.35s ease;
+        }
+
+        .building-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 35px var(--shadow-color);
+            border-color: var(--primary-cyan);
+        }
+
+        .building-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 8px;
+        }
+
+        .seq-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--primary-cyan);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        .load-box {
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 10px;
+            padding: 0.65rem 0.85rem;
+            margin-top: 0.65rem;
+            margin-bottom: 0.65rem;
+        }
+
+        /* Mobile Bottom Nav Bar (Xiaomi Mi 10T Pro & Smartphones) */
         .mobile-bottom-nav {
             display: none;
             position: fixed;
@@ -461,7 +470,6 @@
             filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.8));
         }
 
-        /* RESPONSIVE BREAKPOINTS */
         @media (max-width: 768px) {
             .sidebar { display: none; }
             .mobile-bottom-nav { display: block; }
@@ -476,8 +484,7 @@
     </style>
 </head>
 <body>
-
-    <!-- LEFT SIDEBAR NAVIGATION (DESKTOP - COLLAPSIBLE/ย่อขยายได้) -->
+    <!-- Left Sidebar Navigation -->
     <aside class="sidebar" id="appSidebar">
         <div class="sidebar-brand">
             <div class="brand-info">
@@ -492,42 +499,44 @@
             </button>
         </div>
 
-        <!-- SHORTENED & CONCISE MENU ITEMS (สั้นกระชับ) -->
         <nav class="sidebar-menu">
-            <button class="menu-item active" id="menu-daily" onclick="switchTab('daily')" title="1. รายวัน (วิเคราะห์รายวัน 91 วัน)">
+            <button class="menu-item active" id="menu-daily" onclick="switchTab('daily')" title="1. วิเคราะห์รายวัน (91 วัน)">
                 <i class="fa-solid fa-chart-line" style="color: var(--primary-cyan);"></i>
                 <span>1. รายวัน</span>
             </button>
-            <button class="menu-item" id="menu-monthly" onclick="switchTab('monthly')" title="2. รายเดือน (สถิติประวัติรายเดือน)">
+            <button class="menu-item" id="menu-monthly" onclick="switchTab('monthly')" title="2. สถิติประวัติรายเดือน">
                 <i class="fa-solid fa-calendar-days" style="color: var(--accent-emerald);"></i>
                 <span>2. รายเดือน</span>
             </button>
-            <button class="menu-item" id="menu-cost" onclick="switchTab('cost')" title="3. ต้นทุน (เปรียบเทียบต้นทุน LOX/6Q)">
+            <button class="menu-item" id="menu-cost" onclick="switchTab('cost')" title="3. เปรียบเทียบต้นทุน (LOX/6Q)">
                 <i class="fa-solid fa-calculator" style="color: var(--accent-amber);"></i>
                 <span>3. ต้นทุน</span>
             </button>
-            <button class="menu-item" id="menu-emergency" onclick="switchTab('emergency')" title="4. ผังจ่าย (แผนแก๊สสำรอง & ผังจ่ายกลาง)">
+            <button class="menu-item" id="menu-emergency" onclick="switchTab('emergency')" title="4. แผนก๊าซสำรอง & ผังจ่ายกลาง">
                 <i class="fa-solid fa-shield-cat" style="color: var(--accent-rose);"></i>
                 <span>4. ผังจ่าย</span>
             </button>
-            <button class="menu-item" id="menu-import" onclick="switchTab('import')" title="5. Excel (นำเข้า/ส่งออก Excel)">
+            <button class="menu-item" id="menu-pm" onclick="switchTab('pm')" title="5. แผน & ประวัติ PM ตรวจสอบสถานี">
+                <i class="fa-solid fa-screwdriver-wrench" style="color: #f59e0b;"></i>
+                <span>5. ตรวจ PM</span>
+            </button>
+            <button class="menu-item" id="menu-import" onclick="switchTab('import')" title="6. นำเข้า/ส่งออก Excel">
                 <i class="fa-solid fa-file-import" style="color: var(--accent-purple);"></i>
-                <span>5. Excel</span>
+                <span>6. Excel</span>
             </button>
 
-            <!-- Export Excel Button inside Sidebar -->
+            <!-- Export Excel Button inside Left Sidebar Menu -->
             <button class="sidebar-btn-export" onclick="exportMonthlyExcel()" title="Export Excel สรุปรายเดือน">
                 <i class="fa-solid fa-file-excel"></i>
-                <span>Export Excel</span>
+                <span>Export Excel สรุปรายเดือน</span>
             </button>
         </nav>
 
         <div class="sidebar-footer">
-            ออกแบบและจัดทำโดย<br><strong>กลุ่มงานโครงสร้างและวิศวกรรมการแพทย์</strong><br>โรงพยาบาลนครพิงค์
+            ออกแบบและพัฒนาโดย<br><strong>นายสุรศักดิ์ พึ่งเล่ห์</strong><br>กลุ่มงานโครงสร้างและวิศวกรรมการแพทย์<br>หมวดงานเครื่องมือแพทย์ โรงพยาบาลนครพิงค์
         </div>
     </aside>
 
-    <!-- MAIN WRAPPER -->
     <div class="main-wrapper">
         <!-- Top Header Bar -->
         <header class="top-header">
@@ -557,7 +566,7 @@
         </main>
     </div>
 
-    <!-- MOBILE BOTTOM NAVIGATION (XIAOMI MI 10T PRO & MOBILE PHONES) -->
+    <!-- Mobile Bottom Navigation Bar (Xiaomi Mi 10T Pro & Mobile Phones) -->
     <nav class="mobile-bottom-nav">
         <div class="mob-nav-grid">
             <button class="mob-nav-btn active" id="mob-menu-daily" onclick="switchTab('daily')">
@@ -576,32 +585,33 @@
                 <i class="fa-solid fa-shield-cat"></i>
                 <span>ผังจ่าย</span>
             </button>
+            <button class="mob-nav-btn" id="mob-menu-pm" onclick="switchTab('pm')">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <span>ตรวจ PM</span>
+            </button>
             <button class="mob-nav-btn" id="mob-menu-import" onclick="switchTab('import')">
                 <i class="fa-solid fa-file-import"></i>
                 <span>Excel</span>
             </button>
-            <button class="mob-nav-btn" onclick="exportMonthlyExcel()">
-                <i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i>
-                <span>โหลด Excel</span>
-            </button>
         </div>
     </nav>
 
-    <!-- CORE ORIGINAL BUSINESS LOGIC & DATA -->
     <script>
-        let db = {"monthly": {"months": ["กย.66", "ตค.66", "พค.66", "ธค.66", "มค.67", "กพ.67", "มีค.67", "เมย. 67", "พค. 67", "มิย. 67", "กค. 67", "สค. 67", "กย. 67", "ตค. 67", "พย. 67", "ธค. 67", "มค. 68", "กพ. 68", "มีค. 68", "เมย. 68", "พค. 68", "มิย. 68", "กค. 68", "สค. 68", "กย. 68", "ตค. 68", "พย. 68", "ธค. 68", "มค. 69", "กพ. 69", "มีค. 69", "เม.ย. 69", "พ.ค. 69", "มิ.ย. 69", "ก.ค. 69", "ส.ค. 69", "ก.ย. 69 (ปัจจุบัน)"], "nkp_m3": [68075.84, 74308.56, 54772.03, 63625.9, 63057.99, 66424.48, 44303.94, 76933.62, 73154.32, 47571.46, 64184.75, 64010.32, 64359.34, 71584.06, 70502.09, 70280.55, 73084.84, 67186.38, 68896.6, 62101.53, 69171.0, 66593.07, 57274.21, 68617.83, 72770.71, 73573.46, 69524.84, 76993.07, 78564.46, 64359.32, 76505.24, 71850.0, 74320.0, 72910.0, 74769.78, 75523.64, 52736.33], "khon_m3": [0.0, 0.0, 0.0, 0.0, 1417.74, 1249.62, 1112.62, 1773.51, 1972.48, 1799.46, 2283.93, 1941.34, 2785.7, 2629.98, 2681.89, 2332.08, 2733.8, 2816.46, 2716.49, 2845.96, 2426.65, 2456.95, 2751.1, 2370.83, 2076.3, 2353.14, 1972.49, 1520.58, 1617.78, 1877.32, 1799.46, 1480.0, 1540.0, 1509.58, 1477.91, 1189.12, 696.49], "total_m3": [68075.84, 74308.56, 54772.03, 63625.9, 64475.73, 67674.1, 45416.56, 78707.13, 75126.8, 49370.92, 66468.68, 65951.66, 67145.04, 74214.04, 73183.98, 72612.63, 75818.64, 70002.84, 71613.09, 64947.49, 71597.65, 69050.02, 60025.31, 70988.66, 74847.01, 75926.6, 71497.33, 78513.65, 80182.24, 66236.64, 78304.7, 73330.0, 75860.0, 74419.58, 76247.69, 76712.76, 53432.82], "avg_total_m3": 69477.95, "max_m3": 80182.24, "max_month": "มค. 69", "min_m3": 45416.56, "min_month": "มีค.67"}, "daily": {"dates": ["2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-04", "2026-07-05", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10", "2026-07-11", "2026-07-12", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-25", "2026-07-26", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-01", "2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23"], "nkp_kg": [2178.54, 3177.04, 3086.27, 3086.27, 2995.49, 2723.17, 2995.49, 3267.81, 3177.04, 3086.27, 3086.27, 3086.26, 3267.81, 3358.59, 3358.58, 3540.13, 2995.49, 3177.04, 3177.04, 3177.04, 3177.04, 3358.58, 3358.59, 2541.63, 3086.26, 3267.81, 3358.58, 3540.12, 3358.58, 3177.04, 3177.04, 3086.27, 3177.04, 2995.49, 2995.5, 3267.81, 3358.58, 3449.35, 3540.12, 3086.26, 3267.81, 3449.36, 3358.58, 3630.9, 3358.59, 3177.04, 3177.04, 3267.81, 3358.58, 2995.49, 3267.81, 3267.81, 3267.81, 3177.04, 3267.81, 3086.27, 2995.5, 3177.04, 3267.81, 3177.04, 3267.81, 3177.04, 3267.81, 3086.26, 3086.26, 3267.81, 3086.27, 2723.18, 2995.49, 3267.81, 3267.81, 3267.81, 3267.81, 2904.72, 3086.27, 3086.27, 3267.81, 2995.49, 3086.26, 2813.94, 2723.18, 2904.72, 3086.26, 3358.58, 3086.27, 3177.04, 3086.26, 3086.27, 2995.5, 2995.49, 2042.38], "nkp_m3": [1644.8, 2398.67, 2330.13, 2330.13, 2261.59, 2055.99, 2261.59, 2467.2, 2398.67, 2330.13, 2330.13, 2330.13, 2467.2, 2535.74, 2535.73, 2672.8, 2261.59, 2398.67, 2398.67, 2398.67, 2398.67, 2535.73, 2535.74, 1918.93, 2330.13, 2467.2, 2535.73, 2672.79, 2535.73, 2398.67, 2398.67, 2330.13, 2398.67, 2261.59, 2261.6, 2467.2, 2535.73, 2604.26, 2672.79, 2330.13, 2467.2, 2604.27, 2535.73, 2741.33, 2535.74, 2398.67, 2398.67, 2467.2, 2535.73, 2261.59, 2467.2, 2467.2, 2467.2, 2398.67, 2467.2, 2330.13, 2261.6, 2398.67, 2467.2, 2398.67, 2467.2, 2398.67, 2467.2, 2330.13, 2330.13, 2467.2, 2330.13, 2056.0, 2261.59, 2467.2, 2467.2, 2467.2, 2467.2, 2193.06, 2330.13, 2330.13, 2467.2, 2261.59, 2330.13, 2124.52, 2056.0, 2193.06, 2330.13, 2535.73, 2330.13, 2398.67, 2330.13, 2330.13, 2261.6, 2261.59, 1542.0], "khon_kg": [45.0, 45.0, 45.0, 45.0, 67.5, 90.0, 67.5, 67.5, 67.5, 45.0, 67.5, 67.5, 45.0, 22.5, 67.5, 45.0, 33.75, 45.0, 22.5, 45.0, 45.0, 67.5, 90.0, 67.5, 67.5, 90.0, 90.0, 90.0, 112.5, 112.5, 101.25, 90.0, 67.5, 45.0, 22.5, 45.0, 45.0, 67.5, 45.0, 45.0, 45.0, 45.0, 67.5, 45.0, 67.5, 22.5, 45.0, 67.5, 67.5, 45.0, 45.0, 45.0, 22.5, 45.0, 67.5, 45.0, 90.0, 67.5, 45.0, 67.5, 45.0, 45.0, 67.5, 67.5, 22.5, 45.0, 22.5, 45.0, 45.0, 22.5, 45.0, 45.0, 22.5, 22.5, 45.0, 45.0, 67.5, 45.0, 67.5, 45.0, 22.5, 45.0, 45.0, 45.0, 22.5, 22.5, 45.0, 22.5, 22.5, 67.5, 45.0], "khon_m3": [33.98, 33.98, 33.98, 33.98, 50.96, 67.95, 50.96, 50.96, 50.96, 33.98, 50.96, 50.96, 33.98, 16.99, 50.96, 33.98, 25.48, 33.98, 16.99, 33.98, 33.98, 50.96, 67.95, 50.96, 50.96, 67.95, 67.95, 67.95, 84.94, 84.94, 76.44, 67.95, 50.96, 33.98, 16.99, 33.98, 33.98, 50.96, 33.98, 33.98, 33.98, 33.98, 50.96, 33.98, 50.96, 16.99, 33.98, 50.96, 50.96, 33.98, 33.98, 33.98, 16.99, 33.98, 50.96, 33.98, 67.95, 50.96, 33.98, 50.96, 33.98, 33.98, 50.96, 50.96, 16.99, 33.98, 16.99, 33.98, 33.98, 16.99, 33.98, 33.98, 16.99, 16.99, 33.98, 33.98, 50.96, 33.98, 50.96, 33.98, 16.99, 33.98, 33.98, 33.98, 16.99, 16.99, 33.98, 16.99, 16.99, 50.96, 33.98], "total_kg": [2223.54, 3222.04, 3131.27, 3131.27, 3062.99, 2813.17, 3062.99, 3335.31, 3244.54, 3131.27, 3153.77, 3153.76, 3312.81, 3381.09, 3426.08, 3585.13, 3029.24, 3222.04, 3199.54, 3222.04, 3222.04, 3426.08, 3448.59, 2609.13, 3153.76, 3357.81, 3448.58, 3630.12, 3471.08, 3289.54, 3278.29, 3176.27, 3244.54, 3040.49, 3018.0, 3312.81, 3403.58, 3516.85, 3585.12, 3131.26, 3312.81, 3494.36, 3426.08, 3675.9, 3426.09, 3199.54, 3222.04, 3335.31, 3426.08, 3040.49, 3312.81, 3312.81, 3290.31, 3222.04, 3335.31, 3131.27, 3085.5, 3244.54, 3312.81, 3244.54, 3312.81, 3222.04, 3335.31, 3153.76, 3108.76, 3312.81, 3108.77, 2768.18, 3040.49, 3290.31, 3312.81, 3312.81, 3290.31, 2927.22, 3131.27, 3131.27, 3335.31, 3040.49, 3153.76, 2858.94, 2745.68, 2949.72, 3131.26, 3403.58, 3108.77, 3199.54, 3131.26, 3108.77, 3018.0, 3062.99, 2087.38], "total_m3": [1678.78, 2432.65, 2364.11, 2364.11, 2312.55, 2123.94, 2312.55, 2518.16, 2449.63, 2364.11, 2381.09, 2381.09, 2501.18, 2552.73, 2586.69, 2706.78, 2287.07, 2432.65, 2415.66, 2432.65, 2432.65, 2586.69, 2603.69, 1969.89, 2381.09, 2535.15, 2603.68, 2740.74, 2620.67, 2483.61, 2475.11, 2398.08, 2449.63, 2295.57, 2278.59, 2501.18, 2569.71, 2655.22, 2706.77, 2364.11, 2501.18, 2638.25, 2586.69, 2775.31, 2586.7, 2415.66, 2432.65, 2518.16, 2586.69, 2295.57, 2501.18, 2501.18, 2484.19, 2432.65, 2518.16, 2364.11, 2329.55, 2449.63, 2501.18, 2449.63, 2501.18, 2432.65, 2518.16, 2381.09, 2347.12, 2501.18, 2347.12, 2089.98, 2295.57, 2484.19, 2501.18, 2501.18, 2484.19, 2210.05, 2364.11, 2364.11, 2518.16, 2295.57, 2381.09, 2158.5, 2072.99, 2227.04, 2364.11, 2569.71, 2347.12, 2415.66, 2364.11, 2347.12, 2278.59, 2312.55, 1575.98], "stats": {"avg_nkp_kg": 3144.62, "avg_nkp_m3": 2374.19, "avg_khon_kg": 52.66, "avg_khon_m3": 39.76, "avg_total_kg": 3197.28, "avg_total_m3": 2413.95, "max_total_kg": 3675.9, "max_total_m3": 2775.31, "max_total_date": "2026-08-07", "min_total_kg": 2087.38, "min_total_m3": 1575.98, "min_total_date": "2026-09-23"}}};
+        let db = {"monthly": {"months": ["กย.66", "ตค.66", "พค.66", "ธค.66", "มค.67", "กพ.67", "มีค.67", "เมย. 67", "พค. 67", "มิย. 67", "กค. 67", "สค. 67", "กย. 67", "ตค. 67", "พย. 67", "ธค. 67", "มค. 68", "กพ. 68", "มีค. 68", "เมย. 68", "พค. 68", "มิย. 68", "กค. 68", "สค. 68", "กย. 68", "ตค. 68", "พย. 68", "ธค. 68", "มค. 69", "กพ. 69", "มีค. 69", "เม.ย. 69", "พ.ค. 69", "มิ.ย. 69", "ก.ค. 69", "ส.ค. 69", "ก.ย. 69 (ปัจจุบัน)"], "nkp_m3": [68075.84, 74308.56, 54772.03, 63625.9, 63057.99, 66424.48, 44303.94, 76933.62, 73154.32, 47571.46, 64184.75, 64010.32, 64359.34, 71584.06, 70502.09, 70280.55, 73084.84, 67186.38, 68896.6, 62101.53, 69171.0, 66593.07, 57274.21, 68617.83, 72770.71, 73573.46, 69524.84, 76993.07, 78564.46, 64359.32, 76505.24, 71850.0, 74320.0, 72910.0, 74769.78, 75523.64, 58287.51], "khon_m3": [0.0, 0.0, 0.0, 0.0, 1417.74, 1249.62, 1112.62, 1773.51, 1972.48, 1799.46, 2283.93, 1941.34, 2785.7, 2629.98, 2681.89, 2332.08, 2733.8, 2816.46, 2716.49, 2845.96, 2426.65, 2456.95, 2751.1, 2370.83, 2076.3, 2353.14, 1972.49, 1520.58, 1617.78, 1877.32, 1799.46, 1480.0, 1540.0, 1509.58, 1477.91, 1189.12, 764.52], "total_m3": [68075.84, 74308.56, 54772.03, 63625.9, 64475.73, 67674.1, 45416.56, 78707.13, 75126.8, 49370.92, 66468.68, 65951.66, 67145.04, 74214.04, 73183.98, 72612.63, 75818.64, 70002.84, 71613.09, 64947.49, 71597.65, 69050.02, 60025.31, 70988.66, 74847.01, 75926.6, 71497.33, 78513.65, 80182.24, 66236.64, 78304.7, 73330.0, 75860.0, 74419.58, 76247.69, 76712.76, 59052.03], "avg_total_m3": 69629.83, "max_m3": 80182.24, "max_month": "มค. 69", "min_m3": 45416.56, "min_month": "มีค.67"}, "daily": {"dates": ["2026-06-28", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-04", "2026-07-05", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10", "2026-07-11", "2026-07-12", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-25", "2026-07-26", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-01", "2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08", "2026-08-09", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-26"], "nkp_kg": [2087.77, 2995.49, 2723.17, 2995.49, 3267.81, 3177.04, 3086.27, 3086.27, 3086.26, 3267.81, 3358.59, 3358.58, 3540.13, 2995.49, 3177.04, 3177.04, 3177.04, 3177.04, 3358.58, 3358.59, 2541.63, 3086.26, 3267.81, 3358.58, 3540.12, 3358.58, 3177.04, 3177.04, 3086.27, 3177.04, 2995.49, 2995.5, 3267.81, 3358.58, 3449.35, 3540.12, 3086.26, 3267.81, 3449.36, 3358.58, 3630.9, 3358.59, 3177.04, 3177.04, 3267.81, 3358.58, 2995.49, 3267.81, 3267.81, 3267.81, 3177.04, 3267.81, 3086.27, 2995.5, 3177.04, 3267.81, 3177.04, 3267.81, 3177.04, 3267.81, 3086.26, 3086.26, 3267.81, 3086.27, 2723.18, 2995.49, 3267.81, 3267.81, 3267.81, 3267.81, 2904.72, 3086.27, 3086.27, 3267.81, 2995.49, 3086.26, 2813.94, 2723.18, 2904.72, 3086.26, 3358.58, 3086.27, 3177.04, 3086.26, 3086.27, 2995.5, 2995.49, 3131.65, 2178.54, 2995.49, 1089.27], "nkp_m3": [1576.27, 2261.59, 2055.99, 2261.59, 2467.2, 2398.67, 2330.13, 2330.13, 2330.13, 2467.2, 2535.74, 2535.73, 2672.8, 2261.59, 2398.67, 2398.67, 2398.67, 2398.67, 2535.73, 2535.74, 1918.93, 2330.13, 2467.2, 2535.73, 2672.79, 2535.73, 2398.67, 2398.67, 2330.13, 2398.67, 2261.59, 2261.6, 2467.2, 2535.73, 2604.26, 2672.79, 2330.13, 2467.2, 2604.27, 2535.73, 2741.33, 2535.74, 2398.67, 2398.67, 2467.2, 2535.73, 2261.59, 2467.2, 2467.2, 2467.2, 2398.67, 2467.2, 2330.13, 2261.6, 2398.67, 2467.2, 2398.67, 2467.2, 2398.67, 2467.2, 2330.13, 2330.13, 2467.2, 2330.13, 2056.0, 2261.59, 2467.2, 2467.2, 2467.2, 2467.2, 2193.06, 2330.13, 2330.13, 2467.2, 2261.59, 2330.13, 2124.52, 2056.0, 2193.06, 2330.13, 2535.73, 2330.13, 2398.67, 2330.13, 2330.13, 2261.6, 2261.59, 2364.4, 1644.8, 2261.59, 822.4], "khon_kg": [22.5, 67.5, 90.0, 67.5, 67.5, 67.5, 45.0, 67.5, 67.5, 45.0, 22.5, 67.5, 45.0, 33.75, 45.0, 22.5, 45.0, 45.0, 67.5, 90.0, 67.5, 67.5, 90.0, 90.0, 90.0, 112.5, 112.5, 101.25, 90.0, 67.5, 45.0, 22.5, 45.0, 45.0, 67.5, 45.0, 45.0, 45.0, 45.0, 67.5, 45.0, 67.5, 22.5, 45.0, 67.5, 67.5, 45.0, 45.0, 45.0, 22.5, 45.0, 67.5, 45.0, 90.0, 67.5, 45.0, 67.5, 45.0, 45.0, 67.5, 67.5, 22.5, 45.0, 22.5, 45.0, 45.0, 22.5, 45.0, 45.0, 22.5, 22.5, 45.0, 45.0, 67.5, 45.0, 67.5, 45.0, 22.5, 45.0, 45.0, 45.0, 22.5, 22.5, 45.0, 22.5, 22.5, 67.5, 45.0, 45.0, 45.0, 0], "khon_m3": [16.99, 50.96, 67.95, 50.96, 50.96, 50.96, 33.98, 50.96, 50.96, 33.98, 16.99, 50.96, 33.98, 25.48, 33.98, 16.99, 33.98, 33.98, 50.96, 67.95, 50.96, 50.96, 67.95, 67.95, 67.95, 84.94, 84.94, 76.44, 67.95, 50.96, 33.98, 16.99, 33.98, 33.98, 50.96, 33.98, 33.98, 33.98, 33.98, 50.96, 33.98, 50.96, 16.99, 33.98, 50.96, 50.96, 33.98, 33.98, 33.98, 16.99, 33.98, 50.96, 33.98, 67.95, 50.96, 33.98, 50.96, 33.98, 33.98, 50.96, 50.96, 16.99, 33.98, 16.99, 33.98, 33.98, 16.99, 33.98, 33.98, 16.99, 16.99, 33.98, 33.98, 50.96, 33.98, 50.96, 33.98, 16.99, 33.98, 33.98, 33.98, 16.99, 16.99, 33.98, 16.99, 16.99, 50.96, 33.98, 33.98, 33.98, 0.0], "total_kg": [2110.27, 3062.99, 2813.17, 3062.99, 3335.31, 3244.54, 3131.27, 3153.77, 3153.76, 3312.81, 3381.09, 3426.08, 3585.13, 3029.24, 3222.04, 3199.54, 3222.04, 3222.04, 3426.08, 3448.59, 2609.13, 3153.76, 3357.81, 3448.58, 3630.12, 3471.08, 3289.54, 3278.29, 3176.27, 3244.54, 3040.49, 3018.0, 3312.81, 3403.58, 3516.85, 3585.12, 3131.26, 3312.81, 3494.36, 3426.08, 3675.9, 3426.09, 3199.54, 3222.04, 3335.31, 3426.08, 3040.49, 3312.81, 3312.81, 3290.31, 3222.04, 3335.31, 3131.27, 3085.5, 3244.54, 3312.81, 3244.54, 3312.81, 3222.04, 3335.31, 3153.76, 3108.76, 3312.81, 3108.77, 2768.18, 3040.49, 3290.31, 3312.81, 3312.81, 3290.31, 2927.22, 3131.27, 3131.27, 3335.31, 3040.49, 3153.76, 2858.94, 2745.68, 2949.72, 3131.26, 3403.58, 3108.77, 3199.54, 3131.26, 3108.77, 3018.0, 3062.99, 3176.65, 2223.54, 3040.49, 1089.27], "total_m3": [1593.25, 2312.56, 2123.94, 2312.56, 2518.16, 2449.63, 2364.11, 2381.1, 2381.09, 2501.17, 2552.72, 2586.69, 2706.77, 2287.08, 2432.64, 2415.65, 2432.64, 2432.64, 2586.69, 2603.69, 1969.89, 2381.09, 2535.15, 2603.68, 2740.74, 2620.67, 2483.6, 2475.11, 2398.08, 2449.63, 2295.57, 2278.59, 2501.17, 2569.7, 2655.22, 2706.77, 2364.1, 2501.17, 2638.24, 2586.69, 2775.3, 2586.7, 2415.65, 2432.64, 2518.16, 2586.69, 2295.57, 2501.17, 2501.17, 2484.18, 2432.64, 2518.16, 2364.11, 2329.55, 2449.63, 2501.17, 2449.63, 2501.17, 2432.64, 2518.16, 2381.09, 2347.11, 2501.17, 2347.12, 2089.98, 2295.57, 2484.18, 2501.17, 2501.17, 2484.18, 2210.05, 2364.11, 2364.11, 2518.16, 2295.57, 2381.09, 2158.5, 2072.99, 2227.04, 2364.1, 2569.7, 2347.12, 2415.65, 2364.1, 2347.12, 2278.59, 2312.56, 2398.37, 1678.77, 2295.57, 822.4], "stats": {"avg_nkp_kg": 3121.68, "avg_nkp_m3": 2356.87, "avg_khon_kg": 51.92, "avg_khon_m3": 39.2, "avg_total_kg": 3173.6, "avg_total_m3": 2396.07, "max_total_kg": 3675.9, "max_total_m3": 2775.3, "max_total_date": "2026-08-07", "min_total_kg": 1089.27, "min_total_m3": 822.4, "min_total_date": "2026-09-26"}}};
 
         const initialDefaultDB = JSON.parse(JSON.stringify(db));
 
         // Load persisted DB from localStorage on startup
         (function loadPersistedDB() {
             try {
+                // Invalidate stale legacy storage keys
                 localStorage.removeItem('nkp_o2_db');
                 localStorage.removeItem('nkp_o2_db_v2');
                 localStorage.removeItem('nkp_o2_db_v3');
                 localStorage.removeItem('nkp_o2_db_v4');
+                localStorage.removeItem('nkp_o2_db_v6');
 
-                const saved = localStorage.getItem('nkp_o2_db_v5');
+                const saved = localStorage.getItem('nkp_o2_db_v6');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     if (parsed && parsed.daily && parsed.monthly) {
@@ -612,12 +622,11 @@
                 console.warn("Could not load persisted DB:", e);
             }
         })();
-
         let activeTab = 'daily';
         let dailyUnit = 'm3';
         let chartObj = null;
 
-        // Custom Styled Excel Export Function
+        // Custom Styled Excel Export Function (Exclusive m³ values + Concise Footnote)
         function exportMonthlyExcel() {
             const lastMonthStr = db.monthly.months[db.monthly.months.length - 1] || 'ปัจจุบัน';
             const cleanMonthName = lastMonthStr.replace('(ปัจจุบัน)', '').trim().replace(/\.\s*/g, '').replace(/\s+/g, '');
@@ -648,9 +657,9 @@
             
             rows.push(['']);
             rows.push(['📌 หมายเหตุ / คำอธิบายความหมายของหน่วย (m³) แบบย่อ:']);
-            rows.push(['1. ลบ.ม. (m³): ย่อมาจาก "ลูกบาศก์เมตรก๊าซ" (Cubic Meters of Gas)']);
-            rows.push(['2. อัตราการขยายตัว (Expansion Ratio): ออกซิเจนเหลว (LOX) 1 ลิตร ขยายตัวได้ 0.86 m³']);
-            rows.push(['3. เกณฑ์มาตรฐานจัดซื้อจัดจ้าง: ตามมาตรฐาน NFPA 99 กำหนดให้ใช้หน่วย ลบ.ม. (m³) เป็นหน่วยอ้างอิงหลัก']);
+            rows.push(['1. ลบ.ม. (m³): ย่อมาจาก "ลูกบาศก์เมตรก๊าซ" (Cubic Meters of Gas) คือปริมาตรของก๊าซออกซิเจนทางการแพทย์ที่สภาวะบรรยากาศมาตรฐาน (1 atm, 15°C) สำหรับจ่ายเข้าระบบไปป์ไลน์โรงพยาบาล']);
+            rows.push(['2. อัตราการขยายตัว (Expansion Ratio): ออกซิเจนเหลว (LOX) 1 ลิตร ขยายตัวได้เป็นก๊าซออกซิเจน 860 ลิตรก๊าซ (0.86 m³) หรือ ออกซิเจนเหลว 1 Kg ขยายตัวได้ 0.755 m³ ก๊าซ']);
+            rows.push(['3. เกณฑ์มาตรฐานจัดซื้อจัดจ้าง: การวัดปริมาณการใช้และคำนวณราคาก๊าซทางการแพทย์ตามมาตรฐาน NFPA 99 กำหนดให้ใช้หน่วย ลบ.ม. (m³) เป็นหน่วยอ้างอิงหลักในการตรวจรับพัสดุ']);
 
             const ws = XLSX.utils.aoa_to_sheet(rows);
             ws['!cols'] = [{ wch: 18 }, { wch: 25 }, { wch: 25 }, { wch: 28 }, { wch: 25 }];
@@ -660,7 +669,6 @@
             XLSX.writeFile(wb, `รายงานสรุปการใช้ออกซิเจน_รพนครพิงค์_ถึง${cleanMonthName}.xlsx`);
         }
 
-        // Toggle Sidebar Function (ย่อ / ขยาย เมนู)
         function toggleSidebar() {
             const sidebar = document.getElementById('appSidebar');
             const toggleIcon = document.getElementById('toggleIcon');
@@ -673,35 +681,55 @@
                 if (toggleIcon) toggleIcon.className = 'fa-solid fa-angles-left';
                 localStorage.setItem('sidebarCollapsed', 'false');
             }
+            if (chartObj && (activeTab === 'daily' || activeTab === 'monthly')) {
+                setTimeout(() => chartObj.resize(), 300);
+            }
         }
 
-        // Restore sidebar state from localStorage
-        (function restoreSidebarState() {
-            const savedState = localStorage.getItem('sidebarCollapsed');
-            if (savedState === 'true') {
-                const sidebar = document.getElementById('appSidebar');
-                const toggleIcon = document.getElementById('toggleIcon');
-                if (sidebar) sidebar.classList.add('collapsed');
-                if (toggleIcon) toggleIcon.className = 'fa-solid fa-angles-right';
+        function updateLiveClock() {
+            const cTime = document.getElementById('clockTime');
+            const cDate = document.getElementById('clockDate');
+            if (!cTime || !cDate) return;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('th-TH', { hour12: false });
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('th-TH', dateOptions);
+
+            cTime.innerText = timeStr;
+            cDate.innerText = dateStr;
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            if (newTheme === 'dark') {
+                if (icon) icon.className = 'fa-solid fa-moon';
+                if (text) text.innerText = 'โหมดมืด';
+            } else {
+                if (icon) icon.className = 'fa-solid fa-sun';
+                if (text) text.innerText = 'โหมดสว่าง';
             }
-        })();
+            if (chartObj && (activeTab === 'daily' || activeTab === 'monthly')) {
+                chartObj.update();
+            }
+        }
 
-        function switchTab(tab) {
-            activeTab = tab;
+        function switchTab(tabKey) {
+            activeTab = tabKey;
+            const menuKeys = ['daily', 'monthly', 'cost', 'emergency', 'pm', 'import'];
+            menuKeys.forEach(k => {
+                const el = document.getElementById('menu-' + k);
+                if (el) el.classList.toggle('active', k === tabKey);
+            });
             
-            // Desktop Sidebar Items Active Update
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach(item => item.classList.remove('active'));
-            const activeMenuItem = document.getElementById(`menu-${tab}`);
-            if (activeMenuItem) activeMenuItem.classList.add('active');
-
-            // Mobile Bottom Nav Active Update
-            const mobBtns = document.querySelectorAll('.mob-nav-btn');
-            mobBtns.forEach(btn => btn.classList.remove('active'));
-            const activeMobBtn = document.getElementById(`mob-menu-${tab}`);
-            if (activeMobBtn) activeMobBtn.classList.add('active');
-
-            if (chartObj) {
+            if (chartObj && (tabKey !== 'daily' && tabKey !== 'monthly')) {
                 chartObj.destroy();
                 chartObj = null;
             }
@@ -724,26 +752,26 @@
                 grid.innerHTML = `
                     <div class="kpi-card" style="border-left: 4px solid var(--primary-cyan);">
                         <i class="fa-solid fa-chart-line kpi-icon" style="color: var(--primary-cyan);"></i>
-                        <div class="kpi-label">การใช้รวมเฉลี่ยรายวัน</div>
-                        <div class="kpi-value">${s.avg_total_m3.toLocaleString()} <span style="font-size: 0.9rem; color: var(--text-muted);">m³/วัน</span></div>
-                        <div class="kpi-subtext">แก๊สเหลว ${s.avg_total_kg.toLocaleString()} Kg/วัน (~28.44 นิ้ว/วัน)</div>
+                        <div class="kpi-label">การใช้รวมเฉลี่ยรายวัน (Combined Daily Avg)</div>
+                        <div class="kpi-value">${s.avg_total_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³/วัน</span></div>
+                        <div class="kpi-subtext">แก๊สเหลว ${s.avg_total_kg.toLocaleString()} Kg/วัน (~28.44 นิ้วน้ำ/วัน)</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-nkp);">
                         <i class="fa-solid fa-hospital kpi-icon" style="color: var(--color-nkp);"></i>
-                        <div class="kpi-label">ถังหลัก รพ.นครพิงค์ (NPPH10011)</div>
-                        <div class="kpi-value" style="color: var(--color-nkp);">${s.avg_nkp_m3.toLocaleString()} <span style="font-size: 0.9rem; color: var(--text-muted);">m³/วัน</span></div>
-                        <div class="kpi-subtext">แก๊สเหลว ${s.avg_nkp_kg.toLocaleString()} Kg/วัน (~26.24 นิ้ว/วัน)</div>
+                        <div class="kpi-label">ถังหลัก รพ.นครพิงค์ (NPPH10011 Avg)</div>
+                        <div class="kpi-value" style="color: var(--color-nkp);">${s.avg_nkp_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³/วัน</span></div>
+                        <div class="kpi-subtext">แก๊สเหลว ${s.avg_nkp_kg.toLocaleString()} Kg/วัน (~26.24 นิ้วน้ำ/วัน)</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-khon);">
                         <i class="fa-solid fa-notes-medical kpi-icon" style="color: var(--color-khon);"></i>
-                        <div class="kpi-label">ศูนย์มะเร็งขอนตาล (NPPH20011)</div>
-                        <div class="kpi-value" style="color: var(--color-khon);">${s.avg_khon_m3.toLocaleString()} <span style="font-size: 0.9rem; color: var(--text-muted);">m³/วัน</span></div>
-                        <div class="kpi-subtext">แก๊สเหลว ${s.avg_khon_kg.toLocaleString()} Kg/วัน (~2.20 นิ้ว/วัน)</div>
+                        <div class="kpi-label">ศูนย์มะเร็งขอนตาล (NPPH20011 Avg)</div>
+                        <div class="kpi-value" style="color: var(--color-khon);">${s.avg_khon_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³/วัน</span></div>
+                        <div class="kpi-subtext">แก๊สเหลว ${s.avg_khon_kg.toLocaleString()} Kg/วัน (~2.20 นิ้วน้ำ/วัน)</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--accent-amber);">
                         <i class="fa-solid fa-fire kpi-icon" style="color: var(--accent-amber);"></i>
-                        <div class="kpi-label">ปริมาณใช้สูงสุด (Peak Day)</div>
-                        <div class="kpi-value" style="color: var(--accent-amber);">${s.max_total_m3.toLocaleString()} <span style="font-size: 0.9rem; color: var(--text-muted);">m³</span></div>
+                        <div class="kpi-label">ปริมาณการใช้สูงสุด (Peak Day)</div>
+                        <div class="kpi-value" style="color: var(--accent-amber);">${s.max_total_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³</span></div>
                         <div class="kpi-subtext">เกิด ณ วันที่ ${s.max_total_date} (${s.max_total_kg.toLocaleString()} Kg)</div>
                     </div>
                 `;
@@ -763,8 +791,8 @@
                     <div class="kpi-card" style="border-left: 4px solid var(--primary-cyan);">
                         <i class="fa-solid fa-calendar-check kpi-icon" style="color: var(--primary-cyan);"></i>
                         <div class="kpi-label">ปริมาณการใช้รวมเฉลี่ยรายเดือน (${m.months.length} เดือน)</div>
-                        <div class="kpi-value">${m.avg_total_m3.toLocaleString()} <span style="font-size: 0.9rem; color: var(--text-muted);">m³/เดือน</span></div>
-                        <div class="kpi-subtext">สะสม ${firstMonth} - ${lastMonth}</div>
+                        <div class="kpi-value">${m.avg_total_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³/เดือน</span></div>
+                        <div class="kpi-subtext">ข้อมูลสะสม ${firstMonth} - ${lastMonth}</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-nkp);">
                         <i class="fa-solid fa-hospital kpi-icon" style="color: var(--color-nkp);"></i>
@@ -781,7 +809,7 @@
                     <div class="kpi-card" style="border-left: 4px solid var(--accent-amber);">
                         <i class="fa-solid fa-chart-line-up kpi-icon" style="color: var(--accent-amber);"></i>
                         <div class="kpi-label">สถิติสูงสุดประวัติศาสตร์ (Peak Month)</div>
-                        <div class="kpi-value" style="color: var(--accent-amber);">${m.max_m3.toLocaleString()} <span style="font-size: 0.9rem; color: var(--text-muted);">m³</span></div>
+                        <div class="kpi-value" style="color: var(--accent-amber);">${m.max_m3.toLocaleString()} <span style="font-size: 1rem; color: var(--text-muted);">m³</span></div>
                         <div class="kpi-subtext">สถิติ ณ เดือน ${m.max_month}</div>
                     </div>
                 `;
@@ -789,54 +817,63 @@
                 grid.innerHTML = `
                     <div class="kpi-card" style="border-left: 4px solid var(--color-nkp);">
                         <i class="fa-solid fa-hospital kpi-icon" style="color: var(--color-nkp);"></i>
-                        <div class="kpi-label">คลังท่อสำรอง รพ.นครพิงค์</div>
-                        <div class="kpi-value" style="color: var(--color-nkp);">144 <span style="font-size: 0.9rem; color: var(--text-muted);">ท่อ</span></div>
-                        <div class="kpi-subtext">รวม 908 m³ (สำรองจ่ายได้ 9.09 ชั่วโมง)</div>
+                        <div class="kpi-label">คลังท่อสำรอง รพ.นครพิงค์ (พื้นที่หลัก)</div>
+                        <div class="kpi-value" style="color: var(--color-nkp);">144 <span style="font-size: 1rem; color: var(--text-muted);">ท่อ</span></div>
+                        <div class="kpi-subtext">รวม 908 m³ (สำรองจ่ายได้นาน 9.09 ชั่วโมง)</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-khon);">
                         <i class="fa-solid fa-notes-medical kpi-icon" style="color: var(--color-khon);"></i>
                         <div class="kpi-label">คลังท่อสำรอง ศูนย์มะเร็งขอนตาล</div>
-                        <div class="kpi-value" style="color: var(--color-khon);">40 <span style="font-size: 0.9rem; color: var(--text-muted);">ท่อ</span></div>
-                        <div class="kpi-subtext">รวม 252 m³ (สำรองจ่ายได้ 152 ชั่วโมง)</div>
+                        <div class="kpi-value" style="color: var(--color-khon);">18 <span style="font-size: 1rem; color: var(--text-muted);">ท่อ</span></div>
+                        <div class="kpi-subtext">รวม 114 m³ (สำรองจ่ายได้นาน 55 ชั่วโมง / 2.29 วัน)</div>
+                    </div>
+                    <div class="kpi-card" style="border-left: 4px solid var(--color-total);">
+                        <i class="fa-solid fa-boxes-stacked kpi-icon" style="color: var(--color-total);"></i>
+                        <div class="kpi-label">รวมท่อสำรองทั้งองค์กร</div>
+                        <div class="kpi-value" style="color: var(--color-total);">162 <span style="font-size: 1rem; color: var(--text-muted);">ท่อ</span></div>
+                        <div class="kpi-subtext">รวม 1,022 m³ (จ่ายสำรองรวมได้นาน 9.44 ชั่วโมง)</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--accent-rose);">
-                        <i class="fa-solid fa-[#f43f5e] fa-shield-halved kpi-icon"></i>
-                        <div class="kpi-label">อัตราจ่ายฉุกเฉินสูงสุด (Peak Rate)</div>
-                        <div class="kpi-value" style="color: var(--accent-rose);">116 <span style="font-size: 0.9rem; color: var(--text-muted);">m³/ชม.</span></div>
-                        <div class="kpi-subtext">ต้องใช้ก๊าซท่อ 6Q รวม 20 ท่อ/ชม.</div>
-                    </div>
-                    <div class="kpi-card" style="border-left: 4px solid var(--accent-emerald);">
-                        <i class="fa-solid fa-truck-droplet kpi-icon" style="color: var(--accent-emerald);"></i>
-                        <div class="kpi-label">เวลาเดินทางรถเติมก๊าซฉุกเฉิน</div>
-                        <div class="kpi-value" style="color: var(--accent-emerald);">2-4 <span style="font-size: 0.9rem; color: var(--text-muted);">ชม.</span></div>
-                        <div class="kpi-subtext">ระยะทางขนส่งจากคลังลำพูน</div>
+                        <i class="fa-solid fa-truck-medical kpi-icon" style="color: var(--accent-rose);"></i>
+                        <div class="kpi-label">การันตีจัดส่งฉุกเฉิน (SLA)</div>
+                        <div class="kpi-value" style="color: var(--accent-emerald);">3.00 ชม.</div>
+                        <div class="kpi-subtext">โดย บ.ลานนาแก๊ส ตลอด 24 ชั่วโมง</div>
                     </div>
                 `;
-            } else if (activeTab === 'import') {
+            } else if (activeTab === 'pm') {
                 grid.innerHTML = `
                     <div class="kpi-card" style="border-left: 4px solid var(--accent-emerald);">
-                        <i class="fa-solid fa-database kpi-icon" style="color: var(--accent-emerald);"></i>
-                        <div class="kpi-label">สถานะฐานข้อมูลระบบ</div>
-                        <div class="kpi-value" style="color: var(--accent-emerald);">พร้อมใช้งาน</div>
-                        <div class="kpi-subtext">บันทึกข้อมูลย้อนหลัง ${db.daily.dates.length} วันเรียบร้อย</div>
+                        <i class="fa-solid fa-certificate kpi-icon" style="color: var(--accent-emerald);"></i>
+                        <div class="kpi-label">สถานะการตรวจรับงานจ้าง PM (รอบล่าสุด)</div>
+                        <div class="kpi-value" style="color: var(--accent-emerald);">ผ่านเกณฑ์ 100%</div>
+                        <div class="kpi-subtext">ครั้งที่ 2/2569 (เข้าตรวจ 25 ก.ย. 2569)</div>
                     </div>
-                    <div class="kpi-card" style="border-left: 4px solid var(--primary-cyan);">
-                        <i class="fa-solid fa-tower-cell kpi-icon" style="color: var(--primary-cyan);"></i>
-                        <div class="kpi-label">ถังโทรมาตรหลัก (รพ.นครพิงค์)</div>
-                        <div class="kpi-value" style="color: var(--primary-cyan);">NPPH10011</div>
-                        <div class="kpi-subtext">TW9000 (S/N: ML0560)</div>
+                    <div class="kpi-card" style="border-left: 4px solid var(--color-nkp);">
+                        <i class="fa-solid fa-hospital kpi-icon" style="color: var(--color-nkp);"></i>
+                        <div class="kpi-label">สถานีถังหลัก รพ.นครพิงค์ (TW9000)</div>
+                        <div class="kpi-value" style="color: var(--color-nkp);">พร้อมใช้งาน</div>
+                        <div class="kpi-subtext">S/N: ML0560 | Alarm Test Pass</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--color-khon);">
-                        <i class="fa-solid fa-tower-cell kpi-icon" style="color: var(--color-khon);"></i>
-                        <div class="kpi-label">ถังโทรมาตรศูนย์มะเร็ง (ขอนตาล)</div>
-                        <div class="kpi-value" style="color: var(--color-khon);">NPPH20011</div>
-                        <div class="kpi-subtext">MT3000 (S/N: MM2300)</div>
+                        <i class="fa-solid fa-notes-medical kpi-icon" style="color: var(--color-khon);"></i>
+                        <div class="kpi-label">สถานีศูนย์มะเร็งขอนตาล (MT3000)</div>
+                        <div class="kpi-value" style="color: var(--color-khon);">พร้อมใช้งาน</div>
+                        <div class="kpi-subtext">S/N: MM2300 | ตรวจครบ 6 หมวด</div>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid var(--accent-amber);">
-                        <i class="fa-solid fa-file-excel kpi-icon" style="color: var(--accent-amber);"></i>
-                        <div class="kpi-label">การประมวลผลไฟล์</div>
-                        <div class="kpi-value" style="color: var(--accent-amber);">อัตโนมัติ</div>
-                        <div class="kpi-subtext">คำนวณ m³ และกรองค่าขัดข้องอัตโนมัติ</div>
+                        <i class="fa-solid fa-user-shield kpi-icon" style="color: var(--accent-amber);"></i>
+                        <div class="kpi-label">ผู้ควบคุมงาน & ตรวจรับ (รพ.นครพิงค์)</div>
+                        <div class="kpi-value" style="color: var(--accent-amber); font-size: 1.25rem;">นายสุรศักดิ์ พึ่งเล่ห์</div>
+                        <div class="kpi-subtext">กลุ่มงานโครงสร้างและวิศวกรรมการแพทย์</div>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = `
+                    <div class="kpi-card" style="border-left: 4px solid var(--accent-emerald);">
+                        <i class="fa-solid fa-file-excel kpi-icon" style="color: var(--accent-emerald);"></i>
+                        <div class="kpi-label">สถานะโมดูลนำเข้า/ส่งออก Excel</div>
+                        <div class="kpi-value" style="color: var(--accent-emerald);">พร้อมใช้งาน</div>
+                        <div class="kpi-subtext">รองรับการส่งออกไฟล์ Excel ถึงเดือนปัจจุบัน (เฉพาะ m³)</div>
                     </div>
                 `;
             }
@@ -847,6 +884,7 @@
             else if (activeTab === 'monthly') renderMonthlyModule();
             else if (activeTab === 'cost') renderCostModule();
             else if (activeTab === 'emergency') renderEmergencyModule();
+            else if (activeTab === 'pm') renderPmModule();
             else if (activeTab === 'import') renderImportModule();
         }
 
@@ -857,11 +895,11 @@
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-chart-line" style="color: var(--primary-cyan);"></i> กราฟแนวโน้มการใช้ออกซิเจนรายวัน (91 วันย้อนหลัง)</div>
+                        <div><i class="fa-solid fa-wave-square" style="color: var(--primary-cyan);"></i> กราฟแนวโน้มปริมาณการใช้งานออกซิเจนจริงต่อวัน (91 วัน)</div>
                         <div class="unit-selector">
-                            <button class="btn-unit ${dailyUnit === 'm3' ? 'active' : ''}" onclick="switchDailyUnit('m3')">m³ (ก๊าซ)</button>
-                            <button class="btn-unit ${dailyUnit === 'kg' ? 'active' : ''}" onclick="switchDailyUnit('kg')">Kg (น้ำหนัก)</button>
-                            <button class="btn-unit ${dailyUnit === 'inch' ? 'active' : ''}" onclick="switchDailyUnit('inch')">นิ้วน้ำ (ลดลง/วัน)</button>
+                            <button class="btn-unit ${dailyUnit === 'm3' ? 'active' : ''}" onclick="switchDailyUnit('m3')">ปริมาตร (m³)</button>
+                            <button class="btn-unit ${dailyUnit === 'kg' ? 'active' : ''}" onclick="switchDailyUnit('kg')">น้ำหนัก (Kg)</button>
+                            <button class="btn-unit ${dailyUnit === 'inch' ? 'active' : ''}" onclick="switchDailyUnit('inch')">นิ้วน้ำ (Inches)</button>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -871,27 +909,36 @@
 
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-table-list" style="color: var(--accent-emerald);"></i> ตารางสถิติลายรายละเอียดการใช้ออกซิเจนรายวัน</div>
+                        <div><i class="fa-solid fa-table-list" style="color: var(--accent-emerald);"></i> ตารางสถิติปริมาณการใช้ออกซิเจนรายวัน (แบ่งสีแยก 2 สถานที่)</div>
                     </div>
                     <div class="table-wrapper">
                         <table>
                             <thead>
                                 <tr>
                                     <th>ลำดับ</th>
-                                    <th>วันที่ (YYYY-MM-DD)</th>
+                                    <th>วันที่ (Date)</th>
                                     <th class="th-nkp">รพ.นครพิงค์ (Kg)</th>
                                     <th class="th-nkp">รพ.นครพิงค์ (นิ้วน้ำ)</th>
                                     <th class="th-nkp">รพ.นครพิงค์ (m³)</th>
                                     <th class="th-khon">ศูนย์มะเร็งขอนตาล (Kg)</th>
                                     <th class="th-khon">ศูนย์มะเร็งขอนตาล (m³)</th>
-                                    <th class="th-total">รวมก๊าซทั้งหมด (m³)</th>
+                                    <th class="th-total">ยอดรวมทั้งสิ้น (m³)</th>
                                     <th>หมายเหตุ</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${db.daily.dates.map((d, i) => {
                                     const inch = (db.daily.nkp_kg[i] / 121.03).toFixed(2);
-                                    const tag = (d === db.daily.stats.max_total_date) ? '<span class="tag-peak">🔥 Peak Day</span>' : '';
+                                    let tags = [];
+                                    if (d === db.daily.stats.max_total_date) {
+                                        tags.push('<span class="tag-peak">🔥 Peak Day</span>');
+                                    }
+                                    if (d === '2026-09-25') {
+                                        tags.push('<span class="badge-pm-table" title="ปลด Sensor บำรุงรักษาถัง TW9000 (ML0560) เวลา 13:00 น. อ่านค่า 0.75 นิ้ว / 90.77 Kg"><i class="fa-solid fa-wrench"></i> บำรุงรักษาถัง (PM Station)</span>');
+                                    }
+                                    if (i === db.daily.dates.length - 1) {
+                                        tags.push('<span class="badge-current-day">📌 วันปัจจุบัน</span>');
+                                    }
                                     return `
                                         <tr>
                                             <td>${i + 1}</td>
@@ -902,7 +949,7 @@
                                             <td class="td-khon">${db.daily.khon_kg[i].toLocaleString()}</td>
                                             <td class="td-khon">${db.daily.khon_m3[i].toLocaleString()}</td>
                                             <td class="td-total">${db.daily.total_m3[i].toLocaleString()}</td>
-                                            <td>${tag}</td>
+                                            <td>${tags.join(' ')}</td>
                                         </tr>
                                     `;
                                 }).join('')}
@@ -943,7 +990,23 @@
             chartObj = new Chart(ctx, {
                 type: 'line',
                 data: { labels: db.daily.dates, datasets: datasets },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterBody: function(tooltipItems) {
+                                    const date = tooltipItems[0].label;
+                                    if (date === '2026-09-25') {
+                                        return ['🔧 มีการปลด Sensor บำรุงรักษาถัง TW9000 (13:00 น.)'];
+                                    }
+                                    return [];
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -963,7 +1026,7 @@
 
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-table-list" style="color: var(--primary-cyan);"></i> ตารางสถิติปริมาณการใช้ออกซิเจนรายเดือน</div>
+                        <div><i class="fa-solid fa-table-list" style="color: var(--primary-cyan);"></i> ตารางสถิติปริมาณการใช้ออกซิเจนรายเดือน (แบ่งสีแยก 2 สถานที่)</div>
                     </div>
                     <div class="table-wrapper">
                         <table>
@@ -1003,15 +1066,16 @@
             const ctx = canvas.getContext('2d');
             if (chartObj) chartObj.destroy();
             chartObj = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: db.monthly.months,
                     datasets: [
-                        { label: 'รพ.นครพิงค์ (m³)', data: db.monthly.nkp_m3, backgroundColor: '#06b6d4', borderRadius: 4 },
-                        { label: 'ศูนย์มะเร็งขอนตาล (m³)', data: db.monthly.khon_m3, backgroundColor: '#a855f7', borderRadius: 4 }
+                        { label: 'ยอดรวมทั้งสิ้น (m³)', data: db.monthly.total_m3, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.3 },
+                        { label: 'รพ.นครพิงค์ ถังหลัก (m³)', data: db.monthly.nkp_m3, borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.3 },
+                        { label: 'ศูนย์มะเร็งขอนตาล (m³)', data: db.monthly.khon_m3, borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.3 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true } } }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
@@ -1022,80 +1086,92 @@
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-calculator" style="color: var(--accent-amber);"></i> เครื่องคำนวณประมาณการค่าใช้จ่ายแก๊สออกซิเจนทางการแพทย์</div>
+                        <div><i class="fa-solid fa-calculator" style="color: var(--accent-amber);"></i> ระบบคำนวณและเปรียบเทียบต้นทุน (Liquid Oxygen vs 6Q Cylinders @ 2,000 PSI)</div>
                     </div>
                     <div class="calc-grid">
                         <div class="calc-box">
-                            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--primary-cyan);">1. ระบุเงื่อนไขการคำนวณ</h3>
+                            <h3 style="color: var(--primary-cyan); margin-bottom: 1rem;">1. ปัจจัยราคาและสเปกพื้นฐาน</h3>
                             <div class="form-group">
-                                <label class="form-label">สถานที่อ้างอิง</label>
-                                <select id="cost-site" class="form-control" onchange="calculateCost()">
-                                    <option value="both">รวมทั้ง 2 สถานที่ (รพ.นครพิงค์ + ศูนย์มะเร็ง)</option>
-                                    <option value="nkp">เฉพาะ รพ.นครพิงค์ (ถังหลัก NPPH10011)</option>
-                                    <option value="khon">เฉพาะ ศูนย์มะเร็งขอนตาล (NPPH20011)</option>
-                                </select>
+                                <label class="form-label">ราคาออกซิเจนเหลว (บาท / m³):</label>
+                                <input type="number" class="form-control" id="cost-lox-unit" value="10.90" oninput="updateCostCalc()">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">ราคาออกซิเจนเหลว (บาท / m³)</label>
-                                <input type="number" id="cost-price" class="form-control" value="10.90" step="0.1" oninput="calculateCost()">
+                                <label class="form-label">ราคาออกซิเจนท่อ 6Q (บาท / ท่อ):</label>
+                                <input type="number" class="form-control" id="cost-cyl-unit" value="100.00" oninput="updateCostCalc()">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">ระยะเวลาคำนวณ (เดือน)</label>
-                                <input type="number" id="cost-months" class="form-control" value="1" min="1" max="12" oninput="calculateCost()">
+                                <label class="form-label">ปริมาณแก๊สต่อท่อ 6Q (m³):</label>
+                                <input type="number" class="form-control" id="cost-cyl-vol" value="6.00" readonly>
                             </div>
                         </div>
 
-                        <div class="calc-box" style="border-color: var(--primary-cyan);">
-                            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent-emerald);">2. สรุปผลประมาณการค่าใช้จ่าย</h3>
+                        <div class="calc-box">
+                            <h3 style="color: var(--accent-emerald); margin-bottom: 1rem;">2. ผลการวิเคราะห์เปรียบเทียบเชิงต้นทุน</h3>
                             <div class="res-row">
-                                <span class="res-label">ปริมาณก๊าซเฉลี่ยต่อเดือน:</span>
-                                <span class="res-val" id="res-m3-month">0 m³</span>
+                                <span class="res-label">ราคาออกซิเจนท่อ 6Q ต่อ m³:</span>
+                                <span class="res-val" id="res-cyl-m3">16.67 บาท</span>
                             </div>
                             <div class="res-row">
-                                <span class="res-label">คิดเป็นน้ำหนักแก๊สเหลว:</span>
-                                <span class="res-val" id="res-kg-month" style="color: var(--accent-amber);">0 Kg</span>
+                                <span class="res-label">ต้นทุนออกซิเจนเหลวเทียบเท่า 1 ท่อ (6 m³):</span>
+                                <span class="res-val" id="res-lox-equiv">65.40 บาท</span>
                             </div>
                             <div class="res-row">
-                                <span class="res-label">รวมประมาณการงบประมาณ:</span>
-                                <span class="res-val" id="res-total-cost" style="color: var(--accent-emerald); font-size: 1.3rem;">0 บาท</span>
+                                <span class="res-label">ส่วนต่างความประหยัดต่อ 1 ท่อ (6 m³):</span>
+                                <span class="res-val" style="color: var(--accent-emerald);" id="res-save-cyl">ประหยัด 34.60 บาท</span>
                             </div>
-                            <div class="res-row" style="border-bottom: none;">
-                                <span class="res-label">เฉลี่ยค่าใช้จ่ายต่อวัน:</span>
-                                <span class="res-val" id="res-daily-cost" style="color: var(--text-main);">0 บาท/วัน</span>
+                            <div class="res-row">
+                                <span class="res-label">สัดส่วนความประหยัดเงิน (%):</span>
+                                <span class="res-val" style="color: var(--accent-emerald);" id="res-pct-save">34.60%</span>
+                            </div>
+                            <div class="res-row">
+                                <span class="res-label">งบประมาณประหยัดได้ต่อวัน (รพ.นครพิงค์):</span>
+                                <span class="res-val" style="color: var(--accent-amber);" id="res-daily-save">13,827.95 บาท/วัน</span>
+                            </div>
+                            <div class="res-row">
+                                <span class="res-label">งบประมาณแผ่นดินประหยัดได้ต่อปี:</span>
+                                <span class="res-val" style="color: #10b981; font-size: 1.3rem;" id="res-yearly-save">5,047,200.90 บาท/ปี</span>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            calculateCost();
+            updateCostCalc();
         }
 
-        function calculateCost() {
-            const site = document.getElementById('cost-site').value;
-            const price = parseFloat(document.getElementById('cost-price').value) || 0;
-            const months = parseInt(document.getElementById('cost-months').value, 10) || 1;
+        function updateCostCalc() {
+            const loxEl = document.getElementById('cost-lox-unit');
+            const cylEl = document.getElementById('cost-cyl-unit');
+            if (!loxEl || !cylEl) return;
 
-            let m3PerMonth = 0;
-            if (site === 'nkp') {
-                const sum = db.monthly.nkp_m3.reduce((a, b) => a + b, 0);
-                m3PerMonth = sum / db.monthly.months.length;
-            } else if (site === 'khon') {
-                const sum = db.monthly.khon_m3.reduce((a, b) => a + b, 0);
-                m3PerMonth = sum / db.monthly.months.length;
-            } else {
-                const sum = db.monthly.total_m3.reduce((a, b) => a + b, 0);
-                m3PerMonth = sum / db.monthly.months.length;
-            }
+            const loxP = parseFloat(loxEl.value) || 10.90;
+            const cylP = parseFloat(cylEl.value) || 100.00;
+            const cylV = 6.0;
 
-            const totalM3 = m3PerMonth * months;
-            const totalKg = totalM3 / 0.755;
-            const totalCost = totalM3 * price;
-            const dailyCost = totalCost / (months * 30);
+            const cylPerM3 = cylP / cylV;
+            const loxEquiv = loxP * cylV;
+            const savePerCyl = cylP - loxEquiv;
+            const pctSave = (savePerCyl / cylP) * 100;
 
-            document.getElementById('res-m3-month').innerText = Math.round(totalM3).toLocaleString() + " m³";
-            document.getElementById('res-kg-month').innerText = Math.round(totalKg).toLocaleString() + " Kg";
-            document.getElementById('res-total-cost').innerText = Math.round(totalCost).toLocaleString() + " บาท";
-            document.getElementById('res-daily-cost').innerText = Math.round(dailyCost).toLocaleString() + " บาท/วัน";
+            const dailyM3 = db.daily.stats.avg_nkp_m3;
+            const dailyCylCount = dailyM3 / cylV;
+            const dailyCostLOX = dailyM3 * loxP;
+            const dailyCostCyl = dailyCylCount * cylP;
+            const dailySave = dailyCostCyl - dailyCostLOX;
+            const yearlySave = dailySave * 365;
+
+            const r1 = document.getElementById('res-cyl-m3');
+            const r2 = document.getElementById('res-lox-equiv');
+            const r3 = document.getElementById('res-save-cyl');
+            const r4 = document.getElementById('res-pct-save');
+            const r5 = document.getElementById('res-daily-save');
+            const r6 = document.getElementById('res-yearly-save');
+
+            if (r1) r1.innerText = cylPerM3.toFixed(2) + " บาท/m³";
+            if (r2) r2.innerText = loxEquiv.toFixed(2) + " บาท";
+            if (r3) r3.innerText = "ประหยัด " + savePerCyl.toFixed(2) + " บาท";
+            if (r4) r4.innerText = pctSave.toFixed(2) + "%";
+            if (r5) r5.innerText = dailySave.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " บาท/วัน";
+            if (r6) r6.innerText = yearlySave.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " บาท/ปี";
         }
 
         function renderEmergencyModule() {
@@ -1103,67 +1179,330 @@
             if (!content) return;
 
             content.innerHTML = `
+                <!-- MASTER LAYOUT DIAGRAM WITH LIVE MAGNIFIER -->
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-shield-cat" style="color: var(--accent-rose);"></i> เครื่องมือคำนวณแผนสำรองแก๊สฉุกเฉิน (Emergency Supply Planner)</div>
+                        <div><i class="fa-solid fa-map-location-dot" style="color: var(--primary-cyan);"></i> 1. ผังตำแหน่งระบบจ่ายกลางก๊าซแบบท่อบรรจุสำหรับก๊าซออกซิเจน (Master Central Layout)</div>
+                        <span style="font-size: 0.82rem; color: var(--primary-cyan); font-weight: 500;"><i class="fa-solid fa-magnifying-glass-plus"></i> เลื่อนเมาส์ชี้บนรูปภาพเพื่อเปิดกล้องซูมขยายสด</span>
                     </div>
-                    <div class="calc-grid">
-                        <div class="calc-box">
-                            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent-rose);">1. กำหนดสถานการณ์ฉุกเฉิน</h3>
-                            <div class="form-group">
-                                <label class="form-label">พื้นที่ต้องการจ่ายก๊าซสำรอง</label>
-                                <select id="em-target" class="form-control" onchange="calculateEmergency()">
-                                    <option value="both">รวมทั้ง 2 สถานที่ (รพ.นครพิงค์ + ขอนตาล)</option>
-                                    <option value="nkp">เฉพาะ รพ.นครพิงค์ (ถังหลัก)</option>
-                                    <option value="khon">เฉพาะ ศูนย์มะเร็งขอนตาล</option>
-                                </select>
+                    <div class="img-magnifier-container" id="magContainer1">
+                        <div class="img-magnifier-glass" id="magGlass1"></div>
+                        <img id="magImg1" src="master_manifold_layout.png" alt="ผังตำแหน่งระบบจ่ายกลางก๊าซแบบท่อบรรจุสำหรับก๊าซออกซิเจน" style="width: 100%; display: block;">
+                    </div>
+                </div>
+
+                <!-- O2 PIPING MAP DIAGRAM WITH LIVE MAGNIFIER -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-diagram-project" style="color: var(--accent-emerald);"></i> 2. ผังท่อส่งออกซิเจนทางการแพทย์ รพ.นครพิงค์ (Medical Gas Piping Network)</div>
+                        <span style="font-size: 0.82rem; color: var(--accent-emerald); font-weight: 500;"><i class="fa-solid fa-magnifying-glass-plus"></i> เลื่อนเมาส์ชี้บนรูปภาพเพื่อเปิดกล้องซูมขยายสด</span>
+                    </div>
+                    <div class="img-magnifier-container" id="magContainer2">
+                        <div class="img-magnifier-glass" id="magGlass2"></div>
+                        <img id="magImg2" src="o2_piping_map.jpg" alt="ผังท่อส่งออกซิเจนทางการแพทย์" style="width: 100%; display: block;">
+                    </div>
+                </div>
+
+                <!-- BUILDING CAMPUS MAP & DETAILED LOAD CALCULATION -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-building-circle-check" style="color: var(--accent-amber);"></i> 3. รายละเอียดภาระโหลดการใช้ออกซิเจนรายตึก (Calculated Building Oxygen Load) และคลังท่อสำรอง</div>
+                    </div>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        คำนวณภาระโหลดก๊าซตามสัดส่วนเตียง/ความวิกฤตของหอผู้ป่วยประจำอาคาร (ชี้เมาส์เพื่อขยายดูสเปกและการสลับวาล์วฉุกเฉิน 1 - 8):
+                    </p>
+
+                    <div class="building-grid">
+                        <!-- BUILDING 1 (อุบัติเหตุ / ICU) -->
+                        <div class="building-card" style="border-left: 5px solid #f43f5e;">
+                            <span class="building-badge" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">ลำดับที่ 5 (วิกฤตหนัก)</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;">5</span> อาคาร 1 (ตึก อบ. / อุบัติเหตุ & ICU)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (32.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #f43f5e;">773.88 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(32.25 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>537.4 ลิตร/นาที</strong></div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">ระดับอัตราการใช้ก๊าซ</label>
-                                <select id="em-level" class="form-control" onchange="calculateEmergency()">
-                                    <option value="avg">อัตราใช้ปกติ (Average Rate)</option>
-                                    <option value="peak">อัตราใช้สูงสุด (Peak Demand Rate)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">จำนวนวันที่ต้องการสำรอง (วัน)</label>
-                                <input type="number" id="em-days" class="form-control" value="3" min="1" max="30" oninput="calculateEmergency()">
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong style="color: var(--accent-rose);">30 ท่อ (7 m³ = 210 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: <strong>6 ท่อ</strong></div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: var(--accent-rose);">6.51 ชั่วโมง</strong></div>
                             </div>
                         </div>
 
-                        <div class="calc-box" style="border-color: var(--accent-rose);">
-                            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--accent-amber);">2. ผลคำนวณจำนวนท่อ & น้ำหนักสำรอง</h3>
+                        <!-- BUILDING 16 (ตึกฟ้า) -->
+                        <div class="building-card" style="border-left: 5px solid #06b6d4;">
+                            <span class="building-badge" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">ลำดับที่ 1 (Auto Standby)</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle">1</span> อาคาร 16 (ตึกฟ้า - ผู้ป่วยใน)</h3>
+                            
+                            <div class="load-box">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (18.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary-cyan);">428.61 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(17.86 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>297.6 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">24 ท่อ (6 m³ = 144 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong class="td-nkp">8.06 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 14 (ตึกเขียว) -->
+                        <div class="building-card" style="border-left: 5px solid #10b981;">
+                            <span class="building-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">ลำดับที่ 3</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">3</span> อาคาร 14 (ตึกเขียว - ศัลยกรรม)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (14.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #10b981;">345.27 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(14.39 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>239.8 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong style="color: var(--accent-emerald);">20 ท่อ (7 m³ = 140 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ท่อของ บ.BIG / ลานนาแก๊ส</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: var(--accent-emerald);">9.73 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 11 (ตึกขาว) -->
+                        <div class="building-card" style="border-left: 5px solid #f8fafc;">
+                            <span class="building-badge" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">ลำดับที่ 4</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(248, 250, 252, 0.2); color: #f8fafc;">4</span> อาคาร 11 (ตึกขาว - อายุรกรรม)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(248, 250, 252, 0.2); background: rgba(248, 250, 252, 0.05);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (13.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #f8fafc;">309.55 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(12.90 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>215.0 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">24 ท่อ (6 m³ = 144 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong>11.16 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 12 (ตึกชมพู) -->
+                        <div class="building-card" style="border-left: 5px solid #ec4899;">
+                            <span class="building-badge" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">ลำดับที่ 2</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">2</span> อาคาร 12 (ตึกชมพู - กุมาร/สูติ)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(236, 72, 153, 0.3); background: rgba(236, 72, 153, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (9.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #ec4899;">226.21 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(9.43 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>157.1 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">19 ท่อ (6 m³ = 114 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 19) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #ec4899;">12.09 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 10 (ตึกส้ม) -->
+                        <div class="building-card" style="border-left: 5px solid #f97316;">
+                            <span class="building-badge" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">ลำดับที่ 6</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(249, 115, 22, 0.2); color: #f97316;">6</span> อาคาร 10 (ตึกส้ม - จักษุ/หูคอจมูก)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (6.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #f97316;">142.87 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(5.95 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>99.2 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">14 ท่อ (6 m³ = 84 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> (ใส่ 14) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #f97316;">14.11 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 9 (ตึกเหลือง) -->
+                        <div class="building-card" style="border-left: 5px solid #eab308;">
+                            <span class="building-badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">ลำดับที่ 7</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">7</span> อาคาร 9 (ตึกเหลือง - ฟื้นฟูเรื้อรัง)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(234, 179, 8, 0.3); background: rgba(234, 179, 8, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (3.5% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #eab308;">83.34 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(3.47 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>57.9 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">7 ท่อ (6 m³ = 42 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> (ใส่ 7) | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #eab308;">12.10 ชั่วโมง</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- BUILDING 3 (ตึก OPD) -->
+                        <div class="building-card" style="border-left: 5px solid #ca8a04;">
+                            <span class="building-badge" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">ลำดับที่ 8</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(202, 138, 4, 0.2); color: #ca8a04;">8</span> อาคาร 3 (ตึก OPD / ผู้ป่วยนอก)</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(202, 138, 4, 0.3); background: rgba(202, 138, 4, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊ส (3.0% ของ รพ.):</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #ca8a04;">71.43 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(2.98 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>49.6 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-nkp">24 ท่อ (6 m³ = 144 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>24 ท่อ</strong> | นอกราว: 0 ท่อ</div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: #ca8a04;">48.38 ชั่วโมง (2 วัน)</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- KHON SAN CANCER CENTER -->
+                        <div class="building-card" style="border-left: 5px solid #a855f7;">
+                            <span class="building-badge" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">ศูนย์มะเร็งขอนตาล</span>
+                            <h3 style="font-size: 1.05rem; margin-bottom: 0.3rem;"><span class="seq-circle" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">★</span> ศูนย์มะเร็งขอนตาล</h3>
+                            
+                            <div class="load-box" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.08);">
+                                <div style="font-size: 0.82rem; color: var(--text-muted);">📊 โหลดการใช้แก๊สเฉลี่ย:</div>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #a855f7;">66.50 m³/วัน <span style="font-size: 0.85rem; font-weight: 400;">(2.77 m³/ชม.)</span></div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">⚡ อัตราไหล: <strong>46.2 ลิตร/นาที</strong></div>
+                            </div>
+
+                            <div style="font-size: 0.88rem; line-height: 1.55;">
+                                <div>• คลังท่อสำรอง: <strong class="td-khon">42 ท่อ (6 m³ = 252 m³)</strong></div>
+                                <div>• ในราว Manifold: <strong>20 ท่อ</strong> | สำรองนอกราว: <strong>22 ท่อ</strong></div>
+                                <div>• สิทธิ์ครอบครอง: <strong>ของ รพ.นครพิงค์</strong></div>
+                                <div>• สำรองจ่ายฉุกเฉินได้นาน: <strong style="color: var(--color-khon);">90.97 ชั่วโมง (3.79 วัน)</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMERGENCY CALCULATOR -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-calculator" style="color: var(--accent-rose);"></i> 4. เครื่องมือคำนวณประเมินแผนแก๊สสำรองฉุกเฉิน (Emergency Calculator)</div>
+                    </div>
+                    <div class="calc-grid">
+                        <div class="calc-box">
+                            <h3 style="color: var(--primary-cyan); margin-bottom: 1rem;">1. เลือกสถานการณ์วิกฤตฉุกเฉิน</h3>
+                            <div class="form-group">
+                                <label class="form-label">เลือกพื้นที่/สถานพยาบาล:</label>
+                                <select class="form-control" id="em-target" onchange="updateEmergencyCalc()">
+                                    <option value="nkp">โรงพยาบาลนครพิงค์ (พื้นที่หลัก)</option>
+                                    <option value="khon">ศูนย์มะเร็งขอนตาล</option>
+                                    <option value="total" selected>รวมทั้งองค์กร (รพ.นครพิงค์ + ศูนย์มะเร็ง)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">เลือกระดับความต้องการก๊าซ:</label>
+                                <select class="form-control" id="em-level" onchange="updateEmergencyCalc()">
+                                    <option value="avg" selected>อัตราการใช้เฉลี่ยปกติ (Average Demand)</option>
+                                    <option value="peak">อัตราการใช้สูงสุดในภาวะวิกฤต (Peak Crisis Demand)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">จำนวนวันที่ต้องสำรองแก๊สฉุกเฉิน (วัน):</label>
+                                <input type="number" class="form-control" id="em-days" value="1" min="1" max="30" oninput="updateEmergencyCalc()">
+                            </div>
+                        </div>
+
+                        <div class="calc-box">
+                            <h3 style="color: var(--accent-emerald); margin-bottom: 1rem;">2. ผลการคำนวณความต้องการออกซิเจนฉุกเฉิน</h3>
                             <div class="res-row">
-                                <span class="res-label">ปริมาณก๊าซรวมที่ต้องใช้:</span>
-                                <span class="res-val" id="em-res-m3">0 m³</span>
+                                <span class="res-label">ปริมาณก๊าซออกซิเจนรวมที่ต้องการ:</span>
+                                <span class="res-val" id="em-res-m3">2,447.66 m³</span>
                             </div>
                             <div class="res-row">
-                                <span class="res-label">ออกซิเจนเหลว (LOX Liter):</span>
-                                <span class="res-val" id="em-res-lox-l" style="color: var(--primary-cyan);">0 ลิตร</span>
+                                <span class="res-label">ปริมาณออกซิเจนเหลว (LOX Liquid Liters):</span>
+                                <span class="res-val" id="em-res-lox-l">2,846.12 ลิตร</span>
                             </div>
                             <div class="res-row">
-                                <span class="res-label">เทียบเท่าก๊าซท่อ 6Q (6 ลบ.ม./ท่อ):</span>
-                                <span class="res-val" id="em-res-cyl6" style="color: var(--accent-amber); font-size: 1.2rem;">0 ท่อ</span>
+                                <span class="res-label">น้ำหนักออกซิเจนเหลว (LOX Weight):</span>
+                                <span class="res-val" id="em-res-lox-kg">3,241.93 Kg</span>
                             </div>
-                            <div class="res-row" style="border-bottom: none;">
-                                <span class="res-label">อัตราเปลี่ยนท่อจ่ายสำรอง:</span>
-                                <span class="res-val" id="em-res-rate" style="color: var(--accent-rose);">0 ท่อ/ชม.</span>
+                            <div class="res-row">
+                                <span class="res-label">จำนวนท่อออกซิเจน 6Q (2,000 PSI) ที่ต้องใช้:</span>
+                                <span class="res-val" style="color: var(--accent-amber);" id="em-res-cyl6">409 ท่อ</span>
+                            </div>
+                            <div class="res-row">
+                                <span class="res-label">จำนวนท่อออกซิเจน 7Q ที่ต้องใช้:</span>
+                                <span class="res-val" style="color: var(--accent-amber);" id="em-res-cyl7">350 ท่อ</span>
+                            </div>
+                            <div class="res-row">
+                                <span class="res-label">อัตราการสับเปลี่ยนท่อฉุกเฉินเฉลี่ย:</span>
+                                <span class="res-val" style="color: var(--accent-rose);" id="em-res-rate">17 ท่อ / ชั่วโมง</span>
+                            </div>
+                            <div class="res-row">
+                                <span class="res-label">ประมาณการค่าใช้จ่ายจัดซื้อท่อฉุกเฉิน:</span>
+                                <span class="res-val" style="color: var(--accent-rose); font-size: 1.25rem;" id="em-res-cost">40,900 บาท</span>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            calculateEmergency();
+            updateEmergencyCalc();
+
+            // Enable Magnifier Lenses for both diagrams
+            setTimeout(() => {
+                enableMagnifier("magImg1", "magGlass1", "magContainer1");
+                enableMagnifier("magImg2", "magGlass2", "magContainer2");
+            }, 200);
         }
 
-        function calculateEmergency() {
-            const target = document.getElementById('em-target').value;
-            const level = document.getElementById('em-level').value;
-            const days = parseInt(document.getElementById('em-days').value, 10) || 1;
+        function enableMagnifier(imgID, glassID, containerID) {
+            const img = document.getElementById(imgID);
+            const glass = document.getElementById(glassID);
+            const container = document.getElementById(containerID);
+            if (!img || !glass || !container) return;
+
+            const zoom = 2.2;
+            glass.style.backgroundImage = "url('" + img.src + "')";
+            glass.style.backgroundRepeat = "no-repeat";
+            glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+
+            container.onmouseenter = function() { glass.style.display = "block"; };
+            container.onmouseleave = function() { glass.style.display = "none"; };
+            container.onmousemove = function(e) {
+                const rect = img.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+
+                let w = glass.offsetWidth / 2;
+                let h = glass.offsetHeight / 2;
+
+                if (x > img.width - w) x = img.width - w;
+                if (x < w) x = w;
+                if (y > img.height - h) y = img.height - h;
+                if (y < h) y = h;
+
+                glass.style.left = (x - w) + "px";
+                glass.style.top = (y - h) + "px";
+                glass.style.backgroundPosition = "-" + ((x * zoom) - w) + "px -" + ((y * zoom) - h) + "px";
+            };
+        }
+
+        function updateEmergencyCalc() {
+            const targetEl = document.getElementById('em-target');
+            const levelEl = document.getElementById('em-level');
+            const daysEl = document.getElementById('em-days');
+            if (!targetEl || !levelEl || !daysEl) return;
+
+            const target = targetEl.value;
+            const level = levelEl.value;
+            const days = parseFloat(daysEl.value) || 1;
 
             let dailyM3 = 0;
             if (target === 'nkp') {
-                dailyM3 = (level === 'avg') ? db.daily.stats.avg_nkp_m3 : (db.daily.stats.avg_nkp_m3 * 1.25);
+                dailyM3 = (level === 'avg') ? db.daily.stats.avg_nkp_m3 : (db.daily.stats.avg_nkp_m3 * 1.15);
             } else if (target === 'khon') {
                 dailyM3 = (level === 'avg') ? db.daily.stats.avg_khon_m3 : (db.daily.stats.avg_khon_m3 * 1.70);
             } else {
@@ -1174,61 +1513,281 @@
             const loxKg = totalM3 / 0.755;
             const loxLiters = loxKg / 1.141;
             const cyl6 = Math.ceil(totalM3 / 6.0);
+            const cyl7 = Math.ceil(totalM3 / 7.0);
             const ratePerHour = Math.ceil(cyl6 / (days * 24));
+            const costCyl = cyl6 * 100;
 
-            document.getElementById('em-res-m3').innerText = Math.round(totalM3).toLocaleString() + " m³";
-            document.getElementById('em-res-lox-l').innerText = Math.round(loxLiters).toLocaleString() + " ลิตรเหลว";
-            document.getElementById('em-res-cyl6').innerText = cyl6.toLocaleString() + " ท่อ";
-            document.getElementById('em-res-rate').innerText = ratePerHour.toLocaleString() + " ท่อ / ชม.";
+            const r1 = document.getElementById('em-res-m3');
+            const r2 = document.getElementById('em-res-lox-l');
+            const r3 = document.getElementById('em-res-lox-kg');
+            const r4 = document.getElementById('em-res-cyl6');
+            const r5 = document.getElementById('em-res-cyl7');
+            const r6 = document.getElementById('em-res-rate');
+            const r7 = document.getElementById('em-res-cost');
+
+            if (r1) r1.innerText = totalM3.toLocaleString(undefined, {maximumFractionDigits: 2}) + " m³";
+            if (r2) r2.innerText = loxLiters.toLocaleString(undefined, {maximumFractionDigits: 2}) + " ลิตรเหลว";
+            if (r3) r3.innerText = loxKg.toLocaleString(undefined, {maximumFractionDigits: 2}) + " Kg";
+            if (r4) r4.innerText = cyl6.toLocaleString() + " ท่อ";
+            if (r5) r5.innerText = cyl7.toLocaleString() + " ท่อ";
+            if (r6) r6.innerText = ratePerHour.toLocaleString() + " ท่อ / ชั่วโมง";
+            if (r7) r7.innerText = costCyl.toLocaleString() + " บาท";
+        }
+
+
+        function renderPmModule() {
+            const content = document.getElementById('moduleContent');
+            if (!content) return;
+
+            content.innerHTML = `
+                <!-- TOP NOTICE BANNER -->
+                <div class="content-card" style="border-left: 5px solid var(--accent-amber); background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(20, 30, 48, 0.75));">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <div style="font-size: 1.15rem; font-weight: 700; color: var(--accent-amber); margin-bottom: 0.4rem;">
+                                <i class="fa-solid fa-clipboard-check"></i> บันทึกผลการตรวจสภาพสถานีจ่ายแก๊ส Oxygen และการตรวจรับงานจ้าง (ครั้งที่ 2/2569)
+                            </div>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem; line-height: 1.6;">
+                                อ้างอิงหนังสือแจ้งเข้าดำเนินการเลขที่: 
+                                <strong style="color: var(--primary-cyan);">PM/NPPH1/002/2026 (Rev.1)</strong> (รพ.นครพิงค์) และ 
+                                <strong style="color: #a855f7;">PM/NPPH2/002/2026 (Rev.2)</strong> (ศูนย์มะเร็งขอนตาล)
+                            </p>
+                            <div style="font-size: 0.88rem; color: var(--text-main); line-height: 1.6;">
+                                <i class="fa-solid fa-calendar-day" style="color: var(--accent-amber);"></i> <strong>การเลื่อนนัดเข้าปฏิบัติงาน:</strong> เดิมกำหนดเข้าตรวจวันที่ 24 ก.ย. 2569 (รพ.นครพิงค์) และ 25 ก.ย. 2569 (ศูนย์มะเร็ง) 
+                                ทีมวิศวกรบริการ บ.BIG ได้ขอเลื่อนนัดเพื่อเข้าดำเนินการตรวจเช็ค <strong>พร้อมกันทั้ง 2 สถานี ในวันที่ 25 กันยายน 2569 เวลา 10:00 - 16:00 น.</strong>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="badge-pm-table" style="font-size: 0.88rem; padding: 0.4rem 0.8rem; background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: #10b981;">
+                                <i class="fa-solid fa-circle-check"></i> ตรวจรับงานเรียบร้อย (Pass)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 STATIONS CARDS -->
+                <div class="calc-grid" style="margin-bottom: 1.5rem;">
+                    <!-- Station 1 -->
+                    <div class="calc-box" style="border-left: 4px solid var(--primary-cyan);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                            <h3 style="color: var(--primary-cyan); font-size: 1.05rem; margin: 0;">
+                                <i class="fa-solid fa-hospital"></i> 1. สถานีถังหลัก รพ.นครพิงค์
+                            </h3>
+                            <span class="pm-badge-pass">ผ่านเกณฑ์ (Pass)</span>
+                        </div>
+                        <div style="font-size: 0.88rem; line-height: 1.8; color: var(--text-muted);">
+                            <div>• <strong>รุ่นถัง (Model):</strong> <span style="color: var(--text-main);">TW9000</span> | <strong>S/N:</strong> <span style="color: var(--text-main);">ML0560</span></div>
+                            <div>• <strong>รหัสโทรมาตร (Ship ID):</strong> <span class="td-nkp">NPPH10011</span></div>
+                            <div>• <strong>ความจุถัง:</strong> 9,000 Gallons (~34,000 L / 27,000 Kg)</div>
+                            <div>• <strong>ความดันใช้งาน:</strong> 150 PSIG (ถัง) / 60 PSIG (จ่ายสายเมน)</div>
+                            <div>• <strong>บันทึก PM (25/09/2569):</strong> ปลดสาย Sensor เวลา 13:00 น. ทดสอบสัญญาณ (อ่านค่า 0.75" / 90.77 Kg) ระบบออนไลน์ปกติ</div>
+                            <div>• <strong>ข้อสังเกต:</strong> Gauge หน้าถังสูงกว่า Master 10 PSI ช่างทำเรื่องเบิกเปลี่ยนรอบถัดไป</div>
+                        </div>
+                    </div>
+
+                    <!-- Station 2 -->
+                    <div class="calc-box" style="border-left: 4px solid #a855f7;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                            <h3 style="color: #a855f7; font-size: 1.05rem; margin: 0;">
+                                <i class="fa-solid fa-notes-medical"></i> 2. สถานีศูนย์มะเร็งขอนตาล
+                            </h3>
+                            <span class="pm-badge-pass">ผ่านเกณฑ์ (Pass)</span>
+                        </div>
+                        <div style="font-size: 0.88rem; line-height: 1.8; color: var(--text-muted);">
+                            <div>• <strong>รุ่นถัง (Model):</strong> <span style="color: var(--text-main);">MT3000</span> | <strong>S/N:</strong> <span style="color: var(--text-main);">MM2300</span></div>
+                            <div>• <strong>รหัสโทรมาตร (Ship ID):</strong> <span class="td-khon">NPPH20011</span></div>
+                            <div>• <strong>ความจุถัง:</strong> 3,000 Gallons (~11,000 L / 9,000 Kg)</div>
+                            <div>• <strong>ความดันใช้งาน:</strong> 150 PSIG (ถัง) / 60 PSIG (จ่ายสายเมน)</div>
+                            <div>• <strong>บันทึก PM (25/09/2569):</strong> ดำเนินการตรวจเช็คในวันเดียวกัน อุปกรณ์และระบบวาล์วสมบูรณ์ 100%</div>
+                            <div>• <strong>ข้อสังเกต:</strong> ผ่านการตรวจสอบตามมาตรฐาน 6 หมวดหลักครบถ้วน</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 INSPECTION CATEGORIES TABLE -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-list-check" style="color: var(--primary-cyan);"></i> รายการตรวจสอบสถาพอุปกรณ์ระบบสถานีจ่ายแก๊ส 6 หมวดหลัก (ครั้งที่ 2/2569)</div>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">วันตรวจเช็ค: 25 กันยายน 2569</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 8%;">หมวดที่</th>
+                                    <th style="width: 25%;">รายการอุปกรณ์ที่ตรวจเช็ค</th>
+                                    <th style="width: 35%;">เกณฑ์มาตรฐานการตรวจสอบ</th>
+                                    <th style="width: 14%;">ผลการตรวจ</th>
+                                    <th style="width: 18%;">หมายเหตุ / การแก้ไข</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 700;">1</td>
+                                    <td><strong>1. ตรวจสอบสภาพถัง (Tank Vessel)</strong></td>
+                                    <td>• สภาพสีภายนอกและคราบสนิม<br>• ฐานราก (Foundation) และ น็อตยึดขาถัง<br>• สภาพฉนวนกันความร้อนและชั้นสูญญากาศ</td>
+                                    <td><span class="pm-badge-pass">✓ ผ่าน (Pass)</span></td>
+                                    <td>โครงสร้างแข็งแรง สมบูรณ์ดีทั้ง 2 สถานี</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 700;">2</td>
+                                    <td><strong>2. ตรวจสอบชุดควบคุมความดันและมาตรวัด</strong></td>
+                                    <td>• Gauge ความดันถัง (SET 150 PSIG)<br>• Gauge ระดับออกซิเจนเหลว (Inches H₂O)<br>• Gauge ความดันจ่ายสายเมน (SET 60 PSIG)</td>
+                                    <td><span class="pm-badge-warn">⚠ ติดตาม</span></td>
+                                    <td><strong>รพ.นครพิงค์:</strong> Gauge ถังสูงกว่า Master 10 PSI ช่างทำเรื่องเบิกเปลี่ยนรอบถัดไป</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 700;">3</td>
+                                    <td><strong>3. ตรวจสอบอุปกรณ์ความปลอดภัย</strong></td>
+                                    <td>• Safety Relief Valve ใช้งานได้ปกติ<br>• Rupture Disc สภาพสมบูรณ์<br>• ทดสอบสัญญาณเตือน High/Low Pressure</td>
+                                    <td><span class="pm-badge-pass">✓ ผ่าน (Pass)</span></td>
+                                    <td><strong>Alarm Test Pass</strong> ระบบสัญญาณเตือนทำงานถูกต้อง</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 700;">4</td>
+                                    <td><strong>4. ตรวจสอบวาล์วต่างๆ</strong></td>
+                                    <td>• วาล์วทางเข้าแก๊สเหลว (Liquid Valve)<br>• วาล์วจ่ายไอ (Vapor Valve)<br>• วาล์วสลับ 3 ทาง (Diverter Valve)</td>
+                                    <td><span class="pm-badge-pass">✓ ผ่าน (Pass)</span></td>
+                                    <td>วาล์วหมุนเปิด-ปิดคล่อง ไม่มีการรั่วซึม</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 700;">5</td>
+                                    <td><strong>5. ตรวจสอบระบบไฟฟ้า & Telemetry</strong></td>
+                                    <td>• ไฟเลี้ยง Transmitter 24VDC<br>• กล่องส่งสัญญาณ Telemetry (Ship ID)<br>• ปลดเซนเซอร์ทดสอบสัญญาณการส่ง</td>
+                                    <td><span class="pm-badge-pass">✓ ผ่าน (Pass)</span></td>
+                                    <td><strong>ปลด Sensor 13:00 น.</strong> ทดสอบสัญญาณเรียบร้อย สื่อสารได้ปกติ</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; font-weight: 700;">6</td>
+                                    <td><strong>6. ตรวจสอบสภาพท่อและแผงระเหยไอ</strong></td>
+                                    <td>• แผงระเหยไอด้วยอากาศ (Vaporizer)<br>• ท่อส่งแก๊สหลักและรอยเชื่อมต่อ<br>• ทดสอบการรั่วซึมด้วยสารสบู่ (Soap Test)</td>
+                                    <td><span class="pm-badge-pass">✓ ผ่าน (Pass)</span></td>
+                                    <td>ไม่มีน้ำแข็งเกาะหนาผิดปกติ ไม่มีจุดรั่วซึม</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DOCUMENTS & ATTACHMENTS FOR GOVERNMENT ACCEPTANCE -->
+                <div class="content-card">
+                    <div class="section-title">
+                        <div><i class="fa-solid fa-file-pdf" style="color: var(--accent-rose);"></i> เอกสารประกอบการตรวจรับงานจ้างบำรุงรักษา (Official PM Documents)</div>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                        คลิกเพื่อเปิดดูหรือดาวน์โหลดเอกสารต้นฉบับ สำหรับใช้ประกอบการตรวจรับพัสดุและรายงานทางราชการ:
+                    </p>
+                    <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <a href="การตรวจสถาพอุปกรณ์ของระบบสถานี จ่ายแก๊สOxyg.pdf" target="_blank" class="doc-link-btn" style="border-color: var(--accent-amber); color: var(--accent-amber);">
+                            <i class="fa-solid fa-file-pdf"></i> แผน & รายงานผล PM 6 หมวดหลัก (PDF)
+                        </a>
+                        <a href="โรงพยาบาลนครพิงค์ (24 Sep 2026) Rev.1.pdf" target="_blank" class="doc-link-btn">
+                            <i class="fa-solid fa-file-lines"></i> หนังสือแจ้งเข้าตรวจ รพ.นครพิงค์ (Rev.1)
+                        </a>
+                        <a href="ศูนย์มะเร็ง โรงพยาบาลนครพิงค์ (25 Sep 2026) ( Rev.2).pdf" target="_blank" class="doc-link-btn">
+                            <i class="fa-solid fa-file-lines"></i> หนังสือแจ้งเข้าตรวจ ศูนย์มะเร็ง (Rev.2)
+                        </a>
+                        <a href="41 Cer tank + รายงานการตรวจสอบถังประจำปี.pdf" target="_blank" class="doc-link-btn">
+                            <i class="fa-solid fa-certificate"></i> Cer Tank + รายงานตรวจสอบประจำปี (PDF)
+                        </a>
+                        <a href="141 SOP.pdf" target="_blank" class="doc-link-btn">
+                            <i class="fa-solid fa-book-medical"></i> มาตรฐานขั้นตอนปฏิบัติงาน (SOP)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- SIGN-OFF CONTACT & AUDIT BLOCK -->
+                <div class="calc-grid">
+                    <div class="calc-box">
+                        <h4 style="color: var(--primary-cyan); margin-bottom: 0.8rem;"><i class="fa-solid fa-user-tie"></i> ทีมช่างผู้ดำเนินการ (บ.ผู้จำหน่าย)</h4>
+                        <div style="font-size: 0.9rem; line-height: 1.8; color: var(--text-muted);">
+                            <div>• <strong>วิศวกรผู้เข้าตรวจ:</strong> คุณนคร วิทยจรรยาพงศ์ (โทร 084-174-3936)</div>
+                            <div>• <strong>ผู้จัดการฝ่ายบริการ:</strong> คุณเรวัต ชัยโม (Rewat Chaimo)</div>
+                            <div>• <strong>บริษัท:</strong> บางกอกอินดัสเทรียลแก๊ส จำกัด (BIG)</div>
+                            <div>• <strong>วันที่เข้าดำเนินการ:</strong> 25 กันยายน 2569 เวลา 10:00 - 16:00 น.</div>
+                        </div>
+                    </div>
+                    <div class="calc-box">
+                        <h4 style="color: var(--accent-emerald); margin-bottom: 0.8rem;"><i class="fa-solid fa-user-shield"></i> ผู้ควบคุมงาน & กรรมการตรวจรับ (รพ.นครพิงค์)</h4>
+                        <div style="font-size: 0.9rem; line-height: 1.8; color: var(--text-muted);">
+                            <div>• <strong>ผู้ควบคุมงาน:</strong> นายสุรศักดิ์ พึ่งเล่ห์</div>
+                            <div>• <strong>หน่วยงาน:</strong> หมวดงานเครื่องมือแพทย์ กลุ่มงานโครงสร้างและวิศวกรรมการแพทย์</div>
+                            <div>• <strong>ผู้ร่วมประสานงาน:</strong> คุณทนงศักดิ์ ปัญญาอินทร์ / คุณยุทธนา</div>
+                            <div>• <strong>สถานะการตรวจรับ:</strong> <span class="pm-badge-pass" style="font-size: 0.85rem;">✓ อนุมัติผ่านการตรวจรับงานจ้าง</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function renderImportModule() {
             const content = document.getElementById('moduleContent');
             if (!content) return;
 
-            const isCustomData = !!localStorage.getItem('nkp_o2_db_v5');
+            const isCustomData = !!localStorage.getItem('nkp_o2_db_v6');
 
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i> โมดูลนำเข้า & ส่งออกไฟล์ Excel</div>
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <div><i class="fa-solid fa-file-excel" style="color: var(--accent-emerald);"></i> โมดูลนำเข้า & ส่งออกไฟล์ Excel (Excel Import / Export)</div>
+                        <div style="display: flex; gap: 0.5rem;">
                             ${isCustomData ? `
-                            <button class="btn-export-excel" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 10px; cursor: pointer; font-weight: 600;" onclick="resetToDefaultData()">
-                                <i class="fa-solid fa-rotate-left"></i> คืนค่าเริ่มต้น
+                            <button class="btn-export-excel" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 10px; cursor: pointer; font-weight: 600;" onclick="resetToDefaultData()">
+                                <i class="fa-solid fa-rotate-left"></i> คืนค่าข้อมูลเริ่มต้น
                             </button>
                             ` : ''}
-                            <button class="btn-export-excel" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 10px; cursor: pointer; font-weight: 600;" onclick="exportMonthlyExcel()">
-                                <i class="fa-solid fa-file-excel"></i> Export Excel (m³)
+                            <button class="btn-export-excel" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 10px; cursor: pointer; font-weight: 600;" onclick="exportMonthlyExcel()">
+                                <i class="fa-solid fa-file-excel"></i> Export Excel (เฉพาะ m³)
                             </button>
                         </div>
                     </div>
                     <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-                        <i class="fa-solid fa-file-excel" style="font-size: 3rem; color: var(--accent-emerald); margin-bottom: 0.85rem;"></i>
-                        <h3 style="font-size: 1.05rem;">คลิกหรือลากไฟล์ Excel โทรมาตรมาวางเพื่ออัปเดต</h3>
-                        <p style="color: var(--text-muted); margin-top: 0.4rem; font-size: 0.82rem;">รองรับไฟล์ NPPH10011-History-*.xlsx (รพ.นครพิงค์) และ NPPH20011-History-*.xlsx (ศูนย์มะเร็งขอนตาล)</p>
+                        <i class="fa-file-excel" style="font-size: 3.5rem; color: var(--accent-emerald); margin-bottom: 1rem;"></i>
+                        <h3>คลิกหรือลากไฟล์ Excel โทรมาตรมาวางเพื่ออัปเดต</h3>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem;">รองรับไฟล์ NPPH10011-History-*.xlsx (รพ.นครพิงค์) และ NPPH20011-History-*.xlsx (ศูนย์มะเร็งขอนตาล)</p>
                     </div>
                     <input type="file" id="fileInput" accept=".xlsx, .xls" multiple onchange="handleFileSelect(event)">
                 </div>
             `;
         }
 
-        function handleDragOver(e) { e.preventDefault(); e.stopPropagation(); }
-        function handleDragLeave(e) { e.preventDefault(); e.stopPropagation(); }
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dz = document.getElementById('dropZone');
+            if (dz) dz.style.borderColor = 'var(--primary-cyan)';
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dz = document.getElementById('dropZone');
+            if (dz) dz.style.borderColor = '';
+        }
+
         function handleDrop(e) {
             e.preventDefault();
             e.stopPropagation();
-            const files = e.dataTransfer.files;
-            if (files && files.length > 0) processExcelFiles(files);
+            const dz = document.getElementById('dropZone');
+            if (dz) dz.style.borderColor = '';
+
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                processExcelFiles(files);
+            }
         }
+
         function handleFileSelect(e) {
             const files = e.target.files;
-            if (files && files.length > 0) processExcelFiles(files);
+            if (files && files.length > 0) {
+                processExcelFiles(files);
+            }
         }
 
         function resetToDefaultData() {
             if (confirm("คุณต้องการล้างข้อมูลที่อัปโหลดและคืนค่าเป็นฐานข้อมูลเริ่มต้นหรือไม่?")) {
-                localStorage.removeItem('nkp_o2_db_v5');
+                localStorage.removeItem('nkp_o2_db_v6');
                 db = JSON.parse(JSON.stringify(initialDefaultDB));
                 renderKPIs();
                 renderModule();
@@ -1238,6 +1797,7 @@
 
         function processExcelFiles(files) {
             const fileList = Array.from(files);
+            let processedCount = 0;
             let successMsgs = [];
             let errorMsgs = [];
 
@@ -1257,17 +1817,27 @@
                         } else {
                             errorMsgs.push(`${file.name}: ${result.error}`);
                         }
+                    } catch (err) {
+                        console.error("File parse error:", err);
+                        errorMsgs.push(`${file.name}: เกิดข้อผิดพลาดในการอ่านไฟล์ (${err.message})`);
+                    }
 
+                    processedCount++;
+                    if (processedCount === fileList.length) {
                         if (successMsgs.length > 0) {
                             recalculateAllDB();
-                            localStorage.setItem('nkp_o2_db_v5', JSON.stringify(db));
+                            localStorage.setItem('nkp_o2_db_v6', JSON.stringify(db));
                             renderKPIs();
                             renderModule();
-                            alert("🎉 นำเข้าและประมวลผลไฟล์ Excel สำเร็จ!\n\n" + successMsgs.join("\n"));
+                            let msg = "🎉 นำเข้าและประมวลผลไฟล์ Excel สำเร็จ!\n\n" + successMsgs.join("\n");
+                            if (errorMsgs.length > 0) {
+                                msg += "\n\n⚠️ คำเตือนสำหรับบางไฟล์:\n" + errorMsgs.join("\n");
+                            }
+                            alert(msg);
                             switchTab('daily');
+                        } else if (errorMsgs.length > 0) {
+                            alert("❌ ไม่สามารถนำเข้าไฟล์ได้:\n\n" + errorMsgs.join("\n"));
                         }
-                    } catch (err) {
-                        alert(`❌ เกิดข้อผิดพลาดในไฟล์ ${file.name}: ${err.message}`);
                     }
                 };
                 reader.readAsArrayBuffer(file);
@@ -1275,8 +1845,12 @@
         }
 
         function parseTelemetryRows(jsonRows, filename) {
-            if (!jsonRows || jsonRows.length < 5) return { success: false, error: "ข้อมูลไม่เพียงพอ" };
-            let targetKey = null;
+            if (!jsonRows || jsonRows.length < 5) {
+                return { success: false, error: "ไฟล์ไม่มีข้อมูลเพียงพอ" };
+            }
+
+            // Detect tank site
+            let targetKey = null; // 'nkp' or 'khon'
             for (let i = 0; i < Math.min(5, jsonRows.length); i++) {
                 const rowStr = (jsonRows[i] || []).join(' ');
                 if (rowStr.includes('NPPH10011')) targetKey = 'nkp';
@@ -1286,43 +1860,209 @@
                 if (filename.includes('NPPH10011')) targetKey = 'nkp';
                 else if (filename.includes('NPPH20011')) targetKey = 'khon';
             }
-            if (!targetKey) return { success: false, error: "ไม่พบรหัสถังโทรมาตร" };
+            if (!targetKey) {
+                return { success: false, error: "ไม่พบรหัสถังโทรมาตร (NPPH10011 หรือ NPPH20011) ในไฟล์" };
+            }
+
+            // Find header row containing 'Post Date'
+            let headerIdx = -1;
+            for (let i = 0; i < jsonRows.length; i++) {
+                const r = jsonRows[i];
+                if (r && r[0] && String(r[0]).trim().toLowerCase().includes('post date')) {
+                    headerIdx = i;
+                    break;
+                }
+            }
+            if (headerIdx === -1) {
+                return { success: false, error: "ไม่พบคอลัมน์ 'Post Date' ในไฟล์ Excel" };
+            }
+
+            // Extract entries
+            const entries = [];
+            for (let i = headerIdx + 1; i < jsonRows.length; i++) {
+                const r = jsonRows[i];
+                if (!r || !r[0]) continue;
+                const dtStr = String(r[0]).trim();
+                if (!dtStr || dtStr === 'None' || dtStr === 'Post Date') continue;
+
+                let wtVal = 0;
+                if (r[2] !== undefined && r[2] !== null) {
+                    const cleanWt = String(r[2]).replace(/Kg/gi, '').replace(/,/g, '').trim();
+                    wtVal = parseFloat(cleanWt) || 0;
+                }
+
+                if (wtVal > 0) { // Filter out invalid sensor disconnects/errors (<= 0)
+                    const datePart = dtStr.split(' ')[0];
+                    entries.push({ datetime: dtStr, date: datePart, weight: wtVal });
+                }
+            }
+
+            if (entries.length === 0) {
+                return { success: false, error: "ไม่พบแถวข้อมูลวันเวลาและน้ำหนักก๊าซ" };
+            }
+
+            // Sort chronologically
+            entries.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+            // Filter out momentary PM / sensor disconnect anomalies (e.g. drop from >3,000 kg down to <1,000 kg and recovering in next reading)
+            const cleanEntries = [];
+            for (let i = 0; i < entries.length; i++) {
+                const cur = entries[i];
+                let isGlitch = false;
+                if (i > 0 && i < entries.length - 1) {
+                    const prev = entries[i - 1];
+                    const next = entries[i + 1];
+                    if (prev.weight > 3000 && cur.weight < 1000 && next.weight > 3000) {
+                        isGlitch = true;
+                    }
+                }
+                if (!isGlitch) cleanEntries.push(cur);
+            }
+
+            // Group by date and calculate positive weight drops
+            const dailyUsage = {};
+            const grouped = {};
+            cleanEntries.forEach(item => {
+                if (!grouped[item.date]) grouped[item.date] = [];
+                grouped[item.date].push(item);
+            });
+
+            for (const d in grouped) {
+                const list = grouped[d];
+                let totalDrop = 0;
+                for (let i = 0; i < list.length - 1; i++) {
+                    const diff = list[i].weight - list[i + 1].weight;
+                    if (diff > 0) totalDrop += diff;
+                }
+                dailyUsage[d] = Math.round(totalDrop * 100) / 100;
+            }
+
+            // Merge into db.daily
+            let updatedDays = 0;
+            for (const d in dailyUsage) {
+                const kg = dailyUsage[d];
+                const m3 = Math.round(kg * 0.755 * 100) / 100;
+                let idx = db.daily.dates.indexOf(d);
+
+                if (idx === -1) {
+                    let insertIdx = db.daily.dates.findIndex(dateStr => dateStr > d);
+                    if (insertIdx === -1) insertIdx = db.daily.dates.length;
+
+                    db.daily.dates.splice(insertIdx, 0, d);
+                    db.daily.nkp_kg.splice(insertIdx, 0, targetKey === 'nkp' ? kg : 0);
+                    db.daily.nkp_m3.splice(insertIdx, 0, targetKey === 'nkp' ? m3 : 0);
+                    db.daily.khon_kg.splice(insertIdx, 0, targetKey === 'khon' ? kg : 0);
+                    db.daily.khon_m3.splice(insertIdx, 0, targetKey === 'khon' ? m3 : 0);
+                    db.daily.total_kg.splice(insertIdx, 0, kg);
+                    db.daily.total_m3.splice(insertIdx, 0, m3);
+                } else {
+                    if (targetKey === 'nkp') {
+                        db.daily.nkp_kg[idx] = kg;
+                        db.daily.nkp_m3[idx] = m3;
+                    } else {
+                        db.daily.khon_kg[idx] = kg;
+                        db.daily.khon_m3[idx] = m3;
+                    }
+                    db.daily.total_kg[idx] = Math.round((db.daily.nkp_kg[idx] + db.daily.khon_kg[idx]) * 100) / 100;
+                    db.daily.total_m3[idx] = Math.round((db.daily.nkp_m3[idx] + db.daily.khon_m3[idx]) * 100) / 100;
+                }
+                updatedDays++;
+            }
 
             const tankName = targetKey === 'nkp' ? "โรงพยาบาลนครพิงค์ (NPPH10011)" : "ศูนย์มะเร็งขอนตาล (NPPH20011)";
-            return { success: true, message: `• ${tankName}: นำเข้าไฟล์สำเร็จ` };
+            return {
+                success: true,
+                message: `• ${tankName}: ประมวลผลสำเร็จ ${updatedDays} วัน (รวม ${entries.length} แถวบันทึก)`
+            };
         }
 
         function recalculateAllDB() {
+            // Recompute total_kg and total_m3 for all daily entries
             db.daily.total_kg = db.daily.nkp_kg.map((k, i) => Math.round((k + db.daily.khon_kg[i]) * 100) / 100);
             db.daily.total_m3 = db.daily.nkp_m3.map((m, i) => Math.round((m + db.daily.khon_m3[i]) * 100) / 100);
-        }
 
-        function updateLiveClock() {
-            const now = new Date();
-            const clockTime = document.getElementById('clockTime');
-            const clockDate = document.getElementById('clockDate');
-            if (clockTime) clockTime.innerText = now.toTimeString().split(' ')[0];
-            if (clockDate) {
-                const thMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-                const d = now.getDate();
-                const m = thMonths[now.getMonth()];
-                const y = now.getFullYear() + 543;
-                clockDate.innerText = `${d} ${m} ${y}`;
+            // Recompute daily stats
+            const count = db.daily.dates.length || 1;
+            const sumNkpKg = db.daily.nkp_kg.reduce((a, b) => a + b, 0);
+            const sumNkpM3 = db.daily.nkp_m3.reduce((a, b) => a + b, 0);
+            const sumKhonKg = db.daily.khon_kg.reduce((a, b) => a + b, 0);
+            const sumKhonM3 = db.daily.khon_m3.reduce((a, b) => a + b, 0);
+            const sumTotalKg = db.daily.total_kg.reduce((a, b) => a + b, 0);
+            const sumTotalM3 = db.daily.total_m3.reduce((a, b) => a + b, 0);
+
+            let maxTotalKg = 0, maxTotalM3 = 0, maxTotalDate = "";
+            let minTotalKg = Infinity, minTotalM3 = Infinity, minTotalDate = "";
+
+            db.daily.dates.forEach((d, i) => {
+                const tKg = db.daily.total_kg[i];
+                const tM3 = db.daily.total_m3[i];
+                if (tKg > maxTotalKg) { maxTotalKg = tKg; maxTotalM3 = tM3; maxTotalDate = d; }
+                if (tKg < minTotalKg) { minTotalKg = tKg; minTotalM3 = tM3; minTotalDate = d; }
+            });
+
+            db.daily.stats = {
+                avg_nkp_kg: Math.round((sumNkpKg / count) * 100) / 100,
+                avg_nkp_m3: Math.round((sumNkpM3 / count) * 100) / 100,
+                avg_khon_kg: Math.round((sumKhonKg / count) * 100) / 100,
+                avg_khon_m3: Math.round((sumKhonM3 / count) * 100) / 100,
+                avg_total_kg: Math.round((sumTotalKg / count) * 100) / 100,
+                avg_total_m3: Math.round((sumTotalM3 / count) * 100) / 100,
+                max_total_kg: maxTotalKg,
+                max_total_m3: maxTotalM3,
+                max_total_date: maxTotalDate,
+                min_total_kg: minTotalKg === Infinity ? 0 : minTotalKg,
+                min_total_m3: minTotalM3 === Infinity ? 0 : minTotalM3,
+                min_total_date: minTotalDate
+            };
+
+            // Recompute monthly dataset from daily records
+            const monthMap = {};
+            const thShortMonths = ["มค", "กพ", "มีค", "เมย", "พค", "มิย", "กค", "สค", "กย", "ตค", "พย", "ธค"];
+
+            db.daily.dates.forEach((dStr, i) => {
+                const parts = dStr.split('-');
+                if (parts.length < 2) return;
+                const yearNum = parseInt(parts[0], 10);
+                const monthNum = parseInt(parts[1], 10) - 1;
+                const beYearShort = String((yearNum + 543) % 100).padStart(2, '0');
+                const normKey = thShortMonths[monthNum] + beYearShort;
+
+                if (!monthMap[normKey]) {
+                    monthMap[normKey] = { nkp_m3: 0, khon_m3: 0, total_m3: 0 };
+                }
+                monthMap[normKey].nkp_m3 += db.daily.nkp_m3[i];
+                monthMap[normKey].khon_m3 += db.daily.khon_m3[i];
+                monthMap[normKey].total_m3 += db.daily.total_m3[i];
+            });
+
+            const normMonthly = db.monthly.months.map(m => m.replace(/\(ปัจจุบัน\)/g, '').replace(/\./g, '').replace(/\s+/g, '').trim());
+
+            // Update db.monthly for mapped months
+            for (const normKey in monthMap) {
+                const mIdx = normMonthly.indexOf(normKey);
+                if (mIdx !== -1) {
+                    db.monthly.nkp_m3[mIdx] = Math.round(monthMap[normKey].nkp_m3 * 100) / 100;
+                    db.monthly.khon_m3[mIdx] = Math.round(monthMap[normKey].khon_m3 * 100) / 100;
+                    db.monthly.total_m3[mIdx] = Math.round((db.monthly.nkp_m3[mIdx] + db.monthly.khon_m3[mIdx]) * 100) / 100;
+                }
             }
+
+            const mCount = db.monthly.months.length || 1;
+            const sumMTotal = db.monthly.total_m3.reduce((a, b) => a + b, 0);
+            let maxM3 = 0, maxMMonth = "", minM3 = Infinity, minMMonth = "";
+            db.monthly.total_m3.forEach((val, idx) => {
+                if (val > maxM3) { maxM3 = val; maxMMonth = db.monthly.months[idx]; }
+                if (val < minM3) { minM3 = val; minMMonth = db.monthly.months[idx]; }
+            });
+
+            db.monthly.avg_total_m3 = Math.round((sumMTotal / mCount) * 100) / 100;
+            db.monthly.max_m3 = maxM3;
+            db.monthly.max_month = maxMMonth;
+            db.monthly.min_m3 = minM3 === Infinity ? 0 : minM3;
+            db.monthly.min_month = minMMonth;
         }
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            
-            const themeText = document.getElementById('themeText');
-            const themeIcon = document.getElementById('themeIcon');
-            if (themeText) themeText.innerText = next === 'dark' ? 'โหมดมืด' : 'โหมดสว่าง';
-            if (themeIcon) themeIcon.className = next === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-        }
-
+        // Safe Initialization on Window Load
         window.onload = function() {
             try {
                 updateLiveClock();
