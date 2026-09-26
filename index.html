@@ -27,7 +27,10 @@
             --accent-purple: #a855f7;
             --accent-amber: #f59e0b;
             --accent-rose: #f43f5e;
-            --table-header-bg: rgba(15, 23, 42, 0.95);
+            --table-header-bg: #0e1626;
+            --th-nkp-bg: #0c2538;
+            --th-khon-bg: #231538;
+            --th-total-bg: #0e2920;
             --input-bg: rgba(30, 41, 59, 0.8);
             --shadow-color: rgba(0, 0, 0, 0.4);
 
@@ -51,7 +54,10 @@
             --accent-purple: #7e22ce;
             --accent-amber: #d97706;
             --accent-rose: #e11d48;
-            --table-header-bg: #e2e8f0;
+            --table-header-bg: #f8fafc;
+            --th-nkp-bg: #e0f2fe;
+            --th-khon-bg: #f3e8ff;
+            --th-total-bg: #d1fae5;
             --input-bg: #ffffff;
             --shadow-color: rgba(0, 0, 0, 0.08);
 
@@ -305,9 +311,9 @@
         .btn-unit { background: transparent; border: none; color: var(--text-muted); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
         .btn-unit.active { background: var(--primary-cyan); color: #000000; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4); }
 
-        .th-nkp { background: var(--bg-nkp) !important; color: var(--color-nkp) !important; border-bottom: 2px solid var(--color-nkp); }
-        .th-khon { background: var(--bg-khon) !important; color: var(--color-khon) !important; border-bottom: 2px solid var(--color-khon); }
-        .th-total { background: var(--bg-total) !important; color: var(--color-total) !important; border-bottom: 2px solid var(--color-total); }
+        .th-nkp { background: var(--th-nkp-bg) !important; color: var(--color-nkp) !important; border-bottom: 2px solid var(--color-nkp) !important; }
+        .th-khon { background: var(--th-khon-bg) !important; color: var(--color-khon) !important; border-bottom: 2px solid var(--color-khon) !important; }
+        .th-total { background: var(--th-total-bg) !important; color: var(--color-total) !important; border-bottom: 2px solid var(--color-total) !important; }
 
         .td-nkp { color: var(--color-nkp); font-weight: 600; }
         .td-khon { color: var(--color-khon); font-weight: 600; }
@@ -325,11 +331,105 @@
         .res-label { font-size: 0.92rem; color: var(--text-muted); }
         .res-val { font-size: 1.15rem; font-weight: 700; color: var(--primary-cyan); }
 
-        .table-wrapper { overflow-x: auto; max-height: 440px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-        th { background: var(--table-header-bg); color: var(--primary-cyan); padding: 0.85rem 1rem; font-weight: 600; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--border-color); }
-        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); }
+        .table-wrapper { overflow-x: auto; max-height: 480px; position: relative; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card); }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.9rem; }
+        th { background: var(--table-header-bg) !important; color: var(--primary-cyan); padding: 0.85rem 1rem; font-weight: 600; position: sticky; top: 0; z-index: 20; border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
         tr:hover td { background: rgba(6, 182, 212, 0.04); }
+
+        /* Filter and Sort Toolbar */
+        .table-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.85rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1.15rem;
+            margin-bottom: 1.25rem;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .filter-select {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .filter-select:focus {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+        .filter-select option {
+            background: #0e1626;
+            color: #f8fafc;
+        }
+        [data-theme="light"] .filter-select option {
+            background: #ffffff;
+            color: #0f172a;
+        }
+        .sort-btn-group {
+            display: inline-flex;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2px;
+            gap: 2px;
+        }
+        .btn-sort {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s;
+        }
+        .btn-sort:hover {
+            color: var(--primary-cyan);
+        }
+        .btn-sort.active {
+            background: var(--primary-cyan);
+            color: #000000;
+            box-shadow: 0 2px 6px rgba(6, 182, 212, 0.4);
+        }
+        .badge-count {
+            font-size: 0.82rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--primary-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
 
         .tag-peak { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.75rem; }
         .badge-pm-table { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); padding: 0.2rem 0.55rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; }
@@ -375,7 +475,7 @@
             background: var(--bg-body);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.35rem;
+            padding: 3.2rem 1.35rem 1.35rem 1.35rem;
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -390,12 +490,20 @@
 
         .building-badge {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 0.9rem;
+            right: 0.9rem;
             font-size: 0.78rem;
             font-weight: 700;
             padding: 0.25rem 0.65rem;
             border-radius: 8px;
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .building-card h3 {
+            margin-top: 0;
+            margin-bottom: 0.4rem;
+            line-height: 1.35;
         }
 
         .seq-circle {
@@ -480,6 +588,10 @@
             .live-clock-card { padding: 0.3rem 0.6rem; }
             .clock-time { font-size: 0.95rem; }
             .kpi-grid { grid-template-columns: 1fr; }
+            .table-filter-bar { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+            .filter-group { justify-content: space-between; width: 100%; }
+            .filter-select { flex: 1; max-width: 65%; }
+            .filter-summary { text-align: right; }
         }
     </style>
 </head>
@@ -609,7 +721,6 @@
                 localStorage.removeItem('nkp_o2_db_v2');
                 localStorage.removeItem('nkp_o2_db_v3');
                 localStorage.removeItem('nkp_o2_db_v4');
-                localStorage.removeItem('nkp_o2_db_v6');
 
                 const saved = localStorage.getItem('nkp_o2_db_v6');
                 if (saved) {
@@ -624,7 +735,41 @@
         })();
         let activeTab = 'daily';
         let dailyUnit = 'm3';
+        let dailyFilterMonth = 'all';
+        let dailySortOrder = 'desc';
+        let monthlyFilterYear = 'all';
+        let monthlySortOrder = 'desc';
         let chartObj = null;
+
+        function getThaiMonthLabel(ym) {
+            if (!ym || ym === 'all') return 'แสดงทุกเดือน';
+            const parts = ym.split('-');
+            const yBE = parseInt(parts[0], 10) + 543;
+            const m = parseInt(parts[1], 10);
+            const thMonths = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const thShort = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            return `${thMonths[m]} ${yBE} (${thShort[m]} ${String(yBE).slice(-2)})`;
+        }
+
+        function setDailyMonthFilter(monthVal) {
+            dailyFilterMonth = monthVal;
+            renderDailyModule();
+        }
+
+        function setDailySortOrder(sortVal) {
+            dailySortOrder = sortVal;
+            renderDailyModule();
+        }
+
+        function setMonthlyYearFilter(yrVal) {
+            monthlyFilterYear = yrVal;
+            renderMonthlyModule();
+        }
+
+        function setMonthlySortOrder(sortVal) {
+            monthlySortOrder = sortVal;
+            renderMonthlyModule();
+        }
 
         // Custom Styled Excel Export Function (Exclusive m³ values + Concise Footnote)
         function exportMonthlyExcel() {
@@ -892,10 +1037,45 @@
             const content = document.getElementById('moduleContent');
             if (!content) return;
 
+            // Detect unique months from db.daily.dates
+            const uniqueDailyMonths = [];
+            db.daily.dates.forEach(d => {
+                if (d && d.length >= 7) {
+                    const ym = d.substring(0, 7);
+                    if (!uniqueDailyMonths.includes(ym)) uniqueDailyMonths.push(ym);
+                }
+            });
+            uniqueDailyMonths.sort().reverse();
+
+            // Table row indices filtered & sorted
+            let dailyRowIndices = [];
+            for (let i = 0; i < db.daily.dates.length; i++) {
+                const d = db.daily.dates[i];
+                if (dailyFilterMonth === 'all' || d.startsWith(dailyFilterMonth)) {
+                    dailyRowIndices.push(i);
+                }
+            }
+            if (dailySortOrder === 'desc') {
+                dailyRowIndices.sort((a, b) => db.daily.dates[b].localeCompare(db.daily.dates[a]));
+            } else {
+                dailyRowIndices.sort((a, b) => db.daily.dates[a].localeCompare(db.daily.dates[b]));
+            }
+
+            // Chart data indices - always chronological (asc)
+            let chartIndices = [];
+            for (let i = 0; i < db.daily.dates.length; i++) {
+                const d = db.daily.dates[i];
+                if (dailyFilterMonth === 'all' || d.startsWith(dailyFilterMonth)) {
+                    chartIndices.push(i);
+                }
+            }
+            chartIndices.sort((a, b) => db.daily.dates[a].localeCompare(db.daily.dates[b]));
+            const chartDates = chartIndices.map(i => db.daily.dates[i]);
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-wave-square" style="color: var(--primary-cyan);"></i> กราฟแนวโน้มปริมาณการใช้งานออกซิเจนจริงต่อวัน (91 วัน)</div>
+                        <div><i class="fa-solid fa-wave-square" style="color: var(--primary-cyan);"></i> กราฟแนวโน้มปริมาณการใช้งานออกซิเจนจริงต่อวัน (${chartDates.length} วัน${dailyFilterMonth !== 'all' ? ' • ' + getThaiMonthLabel(dailyFilterMonth) : ''})</div>
                         <div class="unit-selector">
                             <button class="btn-unit ${dailyUnit === 'm3' ? 'active' : ''}" onclick="switchDailyUnit('m3')">ปริมาตร (m³)</button>
                             <button class="btn-unit ${dailyUnit === 'kg' ? 'active' : ''}" onclick="switchDailyUnit('kg')">น้ำหนัก (Kg)</button>
@@ -904,6 +1084,31 @@
                     </div>
                     <div class="chart-container">
                         <canvas id="dailyCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Daily Filter and Sort Control Bar -->
+                <div class="table-filter-bar">
+                    <div class="filter-group">
+                        <span class="filter-label"><i class="fa-solid fa-calendar-days" style="color: var(--primary-cyan);"></i> เลือกเดือน/ปี:</span>
+                        <select class="filter-select" id="dailyMonthSelect" onchange="setDailyMonthFilter(this.value)">
+                            <option value="all" ${dailyFilterMonth === 'all' ? 'selected' : ''}>📅 แสดงทุกเดือน (ทั้งหมด ${db.daily.dates.length} วัน)</option>
+                            ${uniqueDailyMonths.map(ym => `<option value="${ym}" ${dailyFilterMonth === ym ? 'selected' : ''}>${getThaiMonthLabel(ym)}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label"><i class="fa-solid fa-arrow-down-up-across-line" style="color: var(--accent-emerald);"></i> เรียงลำดับ:</span>
+                        <div class="sort-btn-group">
+                            <button class="btn-sort ${dailySortOrder === 'desc' ? 'active' : ''}" onclick="setDailySortOrder('desc')" title="แสดงวันที่ล่าสุดไว้บนสุด">
+                                <i class="fa-solid fa-arrow-down-wide-short"></i> ล่าสุดขึ้นก่อน
+                            </button>
+                            <button class="btn-sort ${dailySortOrder === 'asc' ? 'active' : ''}" onclick="setDailySortOrder('asc')" title="แสดงวันที่เก่าสุดไว้บนสุด">
+                                <i class="fa-solid fa-arrow-up-short-wide"></i> เก่าสุดขึ้นก่อน
+                            </button>
+                        </div>
+                    </div>
+                    <div class="filter-summary">
+                        <span class="badge-count"><i class="fa-solid fa-list-ol"></i> แสดง ${dailyRowIndices.length} จาก ${db.daily.dates.length} วัน</span>
                     </div>
                 </div>
 
@@ -921,14 +1126,17 @@
                                     <th class="th-nkp">รพ.นครพิงค์ (นิ้วน้ำ)</th>
                                     <th class="th-nkp">รพ.นครพิงค์ (m³)</th>
                                     <th class="th-khon">ศูนย์มะเร็งขอนตาล (Kg)</th>
+                                    <th class="th-khon">ศูนย์มะเร็งขอนตาล (นิ้วน้ำ)</th>
                                     <th class="th-khon">ศูนย์มะเร็งขอนตาล (m³)</th>
                                     <th class="th-total">ยอดรวมทั้งสิ้น (m³)</th>
                                     <th>หมายเหตุ</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${db.daily.dates.map((d, i) => {
-                                    const inch = (db.daily.nkp_kg[i] / 121.03).toFixed(2);
+                                ${dailyRowIndices.map((i, rowIdx) => {
+                                    const d = db.daily.dates[i];
+                                    const inch_nkp = (db.daily.nkp_kg[i] / 121.03).toFixed(2);
+                                    const inch_khon = (db.daily.khon_kg[i] / 30.0).toFixed(2);
                                     let tags = [];
                                     if (d === db.daily.stats.max_total_date) {
                                         tags.push('<span class="tag-peak">🔥 Peak Day</span>');
@@ -941,12 +1149,13 @@
                                     }
                                     return `
                                         <tr>
-                                            <td>${i + 1}</td>
+                                            <td>${rowIdx + 1}</td>
                                             <td><strong>${d}</strong></td>
                                             <td class="td-nkp">${db.daily.nkp_kg[i].toLocaleString()}</td>
-                                            <td class="td-nkp">${inch} นิ้ว</td>
+                                            <td class="td-nkp">${inch_nkp} นิ้ว</td>
                                             <td class="td-nkp">${db.daily.nkp_m3[i].toLocaleString()}</td>
                                             <td class="td-khon">${db.daily.khon_kg[i].toLocaleString()}</td>
+                                            <td class="td-khon">${inch_khon} นิ้ว</td>
                                             <td class="td-khon">${db.daily.khon_m3[i].toLocaleString()}</td>
                                             <td class="td-total">${db.daily.total_m3[i].toLocaleString()}</td>
                                             <td>${tags.join(' ')}</td>
@@ -965,20 +1174,20 @@
             let datasets = [];
             if (dailyUnit === 'm3') {
                 datasets = [
-                    { label: 'ยอดรวมทั้งสิ้น (m³)', data: db.daily.total_m3, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 3, fill: true, tension: 0.35 },
-                    { label: 'รพ.นครพิงค์ ถังหลัก (m³)', data: db.daily.nkp_m3, borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.35 },
-                    { label: 'ศูนย์มะเร็งขอนตาล (m³)', data: db.daily.khon_m3, borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.35 }
+                    { label: 'ยอดรวมทั้งสิ้น (m³)', data: chartIndices.map(i => db.daily.total_m3[i]), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 3, fill: true, tension: 0.35 },
+                    { label: 'รพ.นครพิงค์ ถังหลัก (m³)', data: chartIndices.map(i => db.daily.nkp_m3[i]), borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.35 },
+                    { label: 'ศูนย์มะเร็งขอนตาล (m³)', data: chartIndices.map(i => db.daily.khon_m3[i]), borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.35 }
                 ];
             } else if (dailyUnit === 'kg') {
                 datasets = [
-                    { label: 'ยอดรวมทั้งสิ้น (Kg)', data: db.daily.total_kg, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 3, fill: true, tension: 0.35 },
-                    { label: 'รพ.นครพิงค์ ถังหลัก (Kg)', data: db.daily.nkp_kg, borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.35 },
-                    { label: 'ศูนย์มะเร็งขอนตาล (Kg)', data: db.daily.khon_kg, borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.35 }
+                    { label: 'ยอดรวมทั้งสิ้น (Kg)', data: chartIndices.map(i => db.daily.total_kg[i]), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderWidth: 3, fill: true, tension: 0.35 },
+                    { label: 'รพ.นครพิงค์ ถังหลัก (Kg)', data: chartIndices.map(i => db.daily.nkp_kg[i]), borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.35 },
+                    { label: 'ศูนย์มะเร็งขอนตาล (Kg)', data: chartIndices.map(i => db.daily.khon_kg[i]), borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.35 }
                 ];
             } else {
-                const inch_nkp = db.daily.nkp_kg.map(k => +(k / 121.03).toFixed(2));
-                const inch_khon = db.daily.khon_kg.map(k => +(k / 30.0).toFixed(2));
-                const inch_tot = inch_nkp.map((v, i) => +(v + inch_khon[i]).toFixed(2));
+                const inch_nkp = chartIndices.map(i => +(db.daily.nkp_kg[i] / 121.03).toFixed(2));
+                const inch_khon = chartIndices.map(i => +(db.daily.khon_kg[i] / 30.0).toFixed(2));
+                const inch_tot = inch_nkp.map((v, idx) => +(v + inch_khon[idx]).toFixed(2));
                 datasets = [
                     { label: 'รวมการลดลงรายวัน (นิ้วน้ำ)', data: inch_tot, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderWidth: 3, fill: true, tension: 0.35 },
                     { label: 'รพ.นครพิงค์ ถังหลัก (นิ้วน้ำ/วัน)', data: inch_nkp, borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.35 },
@@ -989,7 +1198,7 @@
             if (chartObj) chartObj.destroy();
             chartObj = new Chart(ctx, {
                 type: 'line',
-                data: { labels: db.daily.dates, datasets: datasets },
+                data: { labels: chartDates, datasets: datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1014,13 +1223,71 @@
             const content = document.getElementById('moduleContent');
             if (!content) return;
 
+            // Detect unique Buddhist years
+            const uniqueYears = [];
+            db.monthly.months.forEach(m => {
+                const match = m.match(/\d{2}/);
+                if (match) {
+                    const yr = '25' + match[0];
+                    if (!uniqueYears.includes(yr)) uniqueYears.push(yr);
+                }
+            });
+            uniqueYears.sort().reverse(); // 2569, 2568, 2567, 2566
+
+            // Filter row indices
+            let monthlyRowIndices = [];
+            for (let i = 0; i < db.monthly.months.length; i++) {
+                const m = db.monthly.months[i];
+                const match = m.match(/\d{2}/);
+                const yr = match ? '25' + match[0] : '';
+                if (monthlyFilterYear === 'all' || yr === monthlyFilterYear) {
+                    monthlyRowIndices.push(i);
+                }
+            }
+
+            // Sort order for table: 'desc' (latest first) vs 'asc' (oldest first)
+            if (monthlySortOrder === 'desc') {
+                monthlyRowIndices.sort((a, b) => b - a);
+            } else {
+                monthlyRowIndices.sort((a, b) => a - b);
+            }
+
+            // Chart indices: chronological (asc)
+            let chartIndices = [...monthlyRowIndices].sort((a, b) => a - b);
+            const chartLabels = chartIndices.map(i => db.monthly.months[i]);
+
             content.innerHTML = `
                 <div class="content-card">
                     <div class="section-title">
-                        <div><i class="fa-solid fa-chart-area" style="color: var(--accent-emerald);"></i> กราฟสถิติการใช้ออกซิเจนเหลวรายเดือน (สะสมจนถึงเดือนปัจจุบัน)</div>
+                        <div><i class="fa-solid fa-chart-area" style="color: var(--accent-emerald);"></i> กราฟสถิติการใช้ออกซิเจนเหลวรายเดือน (${chartLabels.length} เดือน${monthlyFilterYear !== 'all' ? ' • ปี ' + monthlyFilterYear : ''})</div>
                     </div>
                     <div class="chart-container">
                         <canvas id="monthlyCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Monthly Filter and Sort Control Bar -->
+                <div class="table-filter-bar">
+                    <div class="filter-group">
+                        <span class="filter-label"><i class="fa-solid fa-calendar" style="color: var(--accent-emerald);"></i> กรองตามปี พ.ศ.:</span>
+                        <select class="filter-select" id="monthlyYearSelect" onchange="setMonthlyYearFilter(this.value)">
+                            <option value="all" ${monthlyFilterYear === 'all' ? 'selected' : ''}>📅 แสดงทุกปี (ทั้งหมด ${db.monthly.months.length} เดือน)</option>
+                            ${uniqueYears.map(yr => `<option value="${yr}" ${monthlyFilterYear === yr ? 'selected' : ''}>ปี ${yr} ${yr === '2569' ? '(ปีปัจจุบัน)' : ''}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label"><i class="fa-solid fa-arrow-down-up-across-line" style="color: var(--primary-cyan);"></i> เรียงลำดับ:</span>
+                        <div class="sort-btn-group">
+                            <button class="btn-sort ${monthlySortOrder === 'desc' ? 'active' : ''}" onclick="setMonthlySortOrder('desc')" title="แสดงเดือนล่าสุดไว้บนสุด">
+                                <i class="fa-solid fa-arrow-down-wide-short"></i> ล่าสุดขึ้นก่อน
+                            </button>
+                            <button class="btn-sort ${monthlySortOrder === 'asc' ? 'active' : ''}" onclick="setMonthlySortOrder('asc')" title="แสดงเดือนเก่าสุดไว้บนสุด">
+                                <i class="fa-solid fa-arrow-up-short-wide"></i> เก่าสุดขึ้นก่อน
+                            </button>
+                        </div>
+                    </div>
+                    <div class="filter-summary">
+                        <span class="badge-count"><i class="fa-solid fa-list-ol"></i> แสดง ${monthlyRowIndices.length} จาก ${db.monthly.months.length} เดือน</span>
                     </div>
                 </div>
 
@@ -1041,12 +1308,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${db.monthly.months.map((m, i) => {
+                                ${monthlyRowIndices.map((i, rowIdx) => {
+                                    const m = db.monthly.months[i];
                                     const khon_str = db.monthly.khon_m3[i] > 0 ? db.monthly.khon_m3[i].toLocaleString() : '-';
                                     const tag = (m === db.monthly.max_month) ? '<span class="tag-peak">🔥 Peak Month</span>' : (m.includes('ปัจจุบัน') ? '<span class="tag-peak" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border-color: var(--accent-emerald);">📌 เดือนปัจจุบัน</span>' : '');
                                     return `
                                         <tr>
-                                            <td>${i + 1}</td>
+                                            <td>${rowIdx + 1}</td>
                                             <td><strong>${m}</strong></td>
                                             <td class="td-nkp">${db.monthly.nkp_m3[i].toLocaleString()}</td>
                                             <td class="td-khon">${khon_str}</td>
@@ -1068,11 +1336,11 @@
             chartObj = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: db.monthly.months,
+                    labels: chartLabels,
                     datasets: [
-                        { label: 'ยอดรวมทั้งสิ้น (m³)', data: db.monthly.total_m3, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.3 },
-                        { label: 'รพ.นครพิงค์ ถังหลัก (m³)', data: db.monthly.nkp_m3, borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.3 },
-                        { label: 'ศูนย์มะเร็งขอนตาล (m³)', data: db.monthly.khon_m3, borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.3 }
+                        { label: 'ยอดรวมทั้งสิ้น (m³)', data: chartIndices.map(i => db.monthly.total_m3[i]), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderWidth: 3, fill: true, tension: 0.3 },
+                        { label: 'รพ.นครพิงค์ ถังหลัก (m³)', data: chartIndices.map(i => db.monthly.nkp_m3[i]), borderColor: '#06b6d4', borderWidth: 2, fill: false, tension: 0.3 },
+                        { label: 'ศูนย์มะเร็งขอนตาล (m³)', data: chartIndices.map(i => db.monthly.khon_m3[i]), borderColor: '#a855f7', borderWidth: 2, fill: false, tension: 0.3 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
