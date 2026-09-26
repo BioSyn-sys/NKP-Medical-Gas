@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <!-- Anti-Cache Control -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -253,6 +256,26 @@
         .clock-time { font-size: 1.15rem; font-weight: 700; color: var(--text-main); font-family: monospace; }
         .clock-date { font-size: 0.75rem; color: var(--text-muted); }
 
+        .btn-purge-cache {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(16, 185, 129, 0.15));
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: var(--primary-cyan);
+            padding: 0.5rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .btn-purge-cache:hover {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(16, 185, 129, 0.3));
+            border-color: var(--primary-cyan);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
+        }
         .theme-toggle-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -666,6 +689,9 @@
                     </div>
                 </div>
 
+                <button class="btn-purge-cache" onclick="forcePurgeAndReload()" title="ล้างแคชบราวเซอร์และโหลดข้อมูลอัปเดตล่าสุด">
+                    <i class="fa-solid fa-arrows-rotate"></i> <span>ล้างแคช & รีเฟรช</span>
+                </button>
                 <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">
                     <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">โหมดมืด</span>
                 </button>
@@ -2101,11 +2127,20 @@
             }
         }
 
+        function forcePurgeAndReload() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch(e) {}
+            window.location.href = window.location.origin + window.location.pathname + '?v=' + Date.now();
+        }
+
         function handleFileSelect(e) {
             const files = e.target.files;
             if (files && files.length > 0) {
                 processExcelFiles(files);
             }
+            if (e && e.target) e.target.value = '';
         }
 
         function resetToDefaultData() {
